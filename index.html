@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiwan Undersea Cable Incidents</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [121.5, 23.5], 
+            zoom: 6 
+        });
+
+        const incidents = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [119.97, 26.15] 
+                    },
+                    "properties": {
+                        "date": "2023-02-02",
+                        "cause": "Chinese Fishing Vessel",
+                        "cable": "Matsu Cable 1",
+                        "description": "Cut near Matsu Islands."
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [122.3, 25.1] 
+                    },
+                    "properties": {
+                        "date": "2024-01-05",
+                        "cause": "Unknown",
+                        "cable": "APCN-2",
+                        "description": "Disruption near Keelung."
+                    }
+                }
+            ]
+        };
+
+        incidents.features.forEach((incident) => {
+            const marker = new mapboxgl.Marker({ color: 'red' })
+                .setLngLat(incident.geometry.coordinates)
+                .setPopup(new mapboxgl.Popup().setHTML(
+                    `<h3>${incident.properties.cable}</h3>
+                     <p><strong>Date:</strong> ${incident.properties.date}</p>
+                     <p><strong>Cause:</strong> ${incident.properties.cause}</p>
+                     <p>${incident.properties.description}</p>`
+                ))
+                .addTo(map);
+        });
+    </script>
+</body>
+</html>
