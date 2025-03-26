@@ -1,6 +1,6 @@
 const config = {
     style: 'mapbox://styles/mapbox/dark-v11',
-    accessToken: 'YOUR_MAPBOX_ACCESS_TOKEN',  
+    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtNnh0aHNsODB5ZjcyanE4NTYwMjRrZDcifQ.jIUeVxkI7mayEkFCKHcgKw',  
     showMarkers: false,
     theme: 'dark',
     alignment: 'left',
