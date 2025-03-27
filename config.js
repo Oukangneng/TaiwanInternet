@@ -53,7 +53,7 @@ const config = {
             description: 'On January 2024, a critical incident occurred involving the Matsu Cable 1, affecting communication in the region.',
             location: {
                 center: [119.97, 26.15], 
-                zoom: 10,
+                zoom: 7.5,
                 pitch: 45,
                 bearing: 20
             },
