@@ -5,16 +5,8 @@
       "type": "Feature",
       "properties": { "name": "Matsu Islands" },
       "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [119.9314, 26.1620],
-            [119.9730, 26.1620],
-            [119.9730, 26.2000],
-            [119.9314, 26.2000],
-            [119.9314, 26.1620]
-          ]
-        ]
+        "type": "Point",
+        "coordinates": [119.9522, 26.1810]  // Center of the previous polygon
       }
     }
   ]
