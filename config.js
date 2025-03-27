@@ -12,7 +12,8 @@ const config = {
     chapters: [
         {
             id: 'intro',
-            title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents', 
+            title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
+            image: './data/taiwan_cables_map.jpg',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
                 center: [121.5, 23.5],
