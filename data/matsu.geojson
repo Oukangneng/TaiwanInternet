@@ -1,13 +1,13 @@
 {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": { "name": "Matsu Islands" },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [119.9522, 26.1810]  // Center of the previous polygon
+   "type": "FeatureCollection",
+   "features": [
+      {
+         "type": "Feature",
+         "properties": { "name": "Matsu Islands" },
+         "geometry": {
+            "type": "Point",
+            "coordinates": [119.9522, 26.1810]
+         }
       }
-    }
-  ]
+   ]
 }
