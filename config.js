@@ -50,7 +50,12 @@ const config = {
             id: 'incident-matsu',
             title: 'The Matsu Islands Incident (Part 1 of 2)',
             image: './data/Matsu.png',
-            description: 'In February 2023, two undersea cables were severed connecting Taiwan\'s Matsu Islands to China. This disruption led to internet shortages for weeks.',
+            description: `
+                In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. 
+                This disruption led to internet shortages for weeks.
+                <br><br>
+                <div style="font-size: 0.85em; font-style: italic; color: #666;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div>
+            `, // Inline style for caption
             location: {
                 center: [119.97, 26.15],
                 zoom: 9.5,
@@ -58,8 +63,7 @@ const config = {
                 bearing: 20
             },
             onChapterEnter: [],
-            onChapterExit: [],
-            caption: 'Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).'
+            onChapterExit: []
         },
         {
             id: 'incident-keelung',
