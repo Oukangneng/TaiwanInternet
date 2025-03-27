@@ -6,9 +6,8 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    // Path to the GeoJSON files
+    // Path to the GeoJSON file
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    matsuGeoJSON: './data/matsu.geojson',
 
     chapters: [
         {
@@ -21,8 +20,30 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {
+                if (!map.getSource('cables')) {
+                    map.addSource('cables', {
+                        'type': 'geojson',
+                        'data': config.cablesGeoJSON
+                    });
+
+                    map.addLayer({
+                        'id': 'cables-layer',
+                        'type': 'line',
+                        'source': 'cables',
+                        'paint': {
+                            'line-color': '#ff5733',
+                            'line-width': 2
+                        }
+                    });
+                }
+            },
+            onChapterExit: function() {
+                if (map.getLayer('cables-layer')) {
+                    map.removeLayer('cables-layer');
+                    map.removeSource('cables');
+                }
+            }
         },
         {
             id: 'incident-matsu',
@@ -38,37 +59,8 @@ const config = {
                 pitch: 45,
                 bearing: 20
             },
-            onChapterEnter: function() {
-                // ✅ Add Matsu highlight effect only on entering this chapter
-                if (!map.getSource('matsu')) {
-                    map.addSource('matsu', {
-                        'type': 'geojson',
-                        'data': config.matsuGeoJSON
-                    });
-
-                    // Highlight fill layer for Matsu Islands
-                    map.addLayer({
-                        'id': 'matsu-highlight',
-                        'type': 'fill',
-                        'source': 'matsu',
-                        'paint': {
-                            'fill-color': '#FFD700',      // Gold fill
-                            'fill-opacity': 0.6,
-                            'fill-outline-color': '#FF4500'  // Border color
-                        },
-                        'before': 'waterway-label'  // Ensure this layer is placed above others
-                    });
-                }
-            },
-            onChapterExit: function() {
-                // ✅ Remove highlight effect when leaving this chapter
-                if (map.getLayer('matsu-highlight')) {
-                    map.removeLayer('matsu-highlight');
-                }
-                if (map.getSource('matsu')) {
-                    map.removeSource('matsu');
-                }
-            }
+            onChapterEnter: [],
+            onChapterExit: []
         },
         {
             id: 'incident-keelung',
@@ -83,6 +75,23 @@ const config = {
                 zoom: 10.5,
                 pitch: 30,
                 bearing: -10
+            },
+            onChapterEnter: [],
+            onChapterExit: []
+        },
+        {
+            id: 'incident-south',
+            title: 'Disruption South of Taiwan',
+            image: './data/south_taiwan_incident.jpg',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div>
+                <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
+            `,
+            location: {
+                center: [121.0, 21.8],
+                zoom: 8,
+                pitch: 40,
+                bearing: 15
             },
             onChapterEnter: [],
             onChapterExit: []
