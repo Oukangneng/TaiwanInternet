@@ -8,7 +8,7 @@ const config = {
 
     // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    matsuGeoJSON: './data/matsu.geojson',  // Updated to point version
+    matsuGeoJSON: './data/matsu.geojson',  // Assuming this is the correct lowercase path
 
     chapters: [
         {
@@ -41,12 +41,25 @@ const config = {
             onChapterEnter: function() {
                 // ✅ Add Matsu glow effect only on entering this chapter
                 if (!map.getSource('matsu')) {
+                    console.log("Adding Matsu source");
                     map.addSource('matsu', {
                         'type': 'geojson',
                         'data': config.matsuGeoJSON
                     });
 
-                    // ✅ Glow layer (circle for Point geometry)
+                    // Highlight fill layer
+                    map.addLayer({
+                        'id': 'matsu-highlight',
+                        'type': 'fill',
+                        'source': 'matsu',
+                        'paint': {
+                            'fill-color': '#FFD700',      // Gold fill
+                            'fill-opacity': 0.6,
+                            'fill-outline-color': '#FF4500'  // Border color
+                        }
+                    });
+
+                    // ✅ Add glow layer
                     map.addLayer({
                         'id': 'matsu-glow',
                         'type': 'circle',
@@ -77,6 +90,9 @@ const config = {
             },
             onChapterExit: function() {
                 // ✅ Remove glow effect when leaving this chapter
+                if (map.getLayer('matsu-highlight')) {
+                    map.removeLayer('matsu-highlight');
+                }
                 if (map.getLayer('matsu-glow')) {
                     map.removeLayer('matsu-glow');
                 }
