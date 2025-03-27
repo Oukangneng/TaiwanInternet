@@ -12,9 +12,9 @@ const config = {
     chapters: [
         {
             id: 'intro',
-            title: 'Tracking Taiwan’s Undersea Cable Incidents         By Owen OConnell',
+            title: 'Tracking Taiwan’s Undersea Cable Incidents',
             image: './data/taiwan_cables_map.jpg', 
-            description: 'This is an overview of Taiwan\'s undersea cable infrastructure and the incidents disrupting them.',
+            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline) ',
             location: {
                 center: [121.5, 23.5], 
                 zoom: 6,
