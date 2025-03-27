@@ -8,7 +8,7 @@ const config = {
 
     // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    matsuGeoJSON: './data/matsu.geojson',  // ✅ Add the Matsu Islands GeoJSON
+    matsuGeoJSON: './data/matsu.geojson',
 
     chapters: [
         {
@@ -21,30 +21,8 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: function() {
-                if (!map.getSource('cables')) {
-                    map.addSource('cables', {
-                        'type': 'geojson',
-                        'data': config.cablesGeoJSON
-                    });
-
-                    map.addLayer({
-                        'id': 'cables-layer',
-                        'type': 'line',
-                        'source': 'cables',
-                        'paint': {
-                            'line-color': '#ff5733',
-                            'line-width': 2
-                        }
-                    });
-                }
-            },
-            onChapterExit: function() {
-                if (map.getLayer('cables-layer')) {
-                    map.removeLayer('cables-layer');
-                    map.removeSource('cables');
-                }
-            }
+            onChapterEnter: [],
+            onChapterExit: []
         },
         {
             id: 'incident-matsu',
@@ -61,31 +39,69 @@ const config = {
                 bearing: 20
             },
             onChapterEnter: function() {
-                // ✅ Add the Matsu Islands highlight layer
+                // ✅ Add Matsu glow effect only on entering this chapter
                 if (!map.getSource('matsu')) {
                     map.addSource('matsu', {
                         'type': 'geojson',
                         'data': config.matsuGeoJSON
                     });
 
+                    // Highlight fill layer
                     map.addLayer({
                         'id': 'matsu-highlight',
                         'type': 'fill',
                         'source': 'matsu',
-                        'layout': {},
                         'paint': {
-                            'fill-color': '#FFD700',  // Highlight color (gold)
+                            'fill-color': '#FFD700',      // Gold fill
                             'fill-opacity': 0.6,
                             'fill-outline-color': '#FF4500'  // Border color
                         }
                     });
+
+                    // ✅ Add glow layer
+                    map.addLayer({
+                        'id': 'matsu-glow',
+                        'type': 'circle',
+                        'source': 'matsu',
+                        'paint': {
+                            'circle-radius': 20,
+                            'circle-color': '#FFD700',     // Gold glow
+                            'circle-opacity': 0.7,
+                            'circle-blur': 1.5,
+                            'circle-stroke-width': 2,
+                            'circle-stroke-color': '#FF4500',
+                            'circle-stroke-opacity': 0.9
+                        }
+                    });
+
+                    // ✅ Add pulsing animation
+                    let radius = 20;
+                    let growing = true;
+
+                    window.matsuGlowInterval = setInterval(() => {
+                        radius = growing ? radius + 1 : radius - 1;
+                        if (radius >= 30) growing = false;
+                        if (radius <= 20) growing = true;
+
+                        map.setPaintProperty('matsu-glow', 'circle-radius', radius);
+                    }, 100);  // Animation speed
                 }
             },
             onChapterExit: function() {
-                // ✅ Remove the Matsu Islands highlight layer
+                // ✅ Remove glow effect when leaving this chapter
                 if (map.getLayer('matsu-highlight')) {
                     map.removeLayer('matsu-highlight');
+                }
+                if (map.getLayer('matsu-glow')) {
+                    map.removeLayer('matsu-glow');
+                }
+                if (map.getSource('matsu')) {
                     map.removeSource('matsu');
+                }
+
+                // ✅ Clear the animation interval
+                if (window.matsuGlowInterval) {
+                    clearInterval(window.matsuGlowInterval);
                 }
             }
         },
@@ -102,23 +118,6 @@ const config = {
                 zoom: 10.5,
                 pitch: 30,
                 bearing: -10
-            },
-            onChapterEnter: [],
-            onChapterExit: []
-        },
-        {
-            id: 'incident-south',
-            title: 'Disruption South of Taiwan',
-            image: './data/south_taiwan_incident.jpg',
-            description: `
-                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div>
-                <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
-            `,
-            location: {
-                center: [121.0, 21.8],
-                zoom: 8,
-                pitch: 40,
-                bearing: 15
             },
             onChapterEnter: [],
             onChapterExit: []
