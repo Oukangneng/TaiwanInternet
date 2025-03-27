@@ -12,7 +12,7 @@ const config = {
     chapters: [
         {
             id: 'intro',
-            title: 'Tracking Taiwan’s Undersea Cable Incidents | By Owen OConnell',
+            title: 'Tracking Taiwan’s Undersea Cable Incidents      By Owen OConnell',
             image: './data/taiwan_cables_map.jpg', 
             description: 'This is an overview of Taiwan\'s undersea cable infrastructure and the incidents disrupting them.',
             location: {
