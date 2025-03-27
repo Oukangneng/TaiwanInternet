@@ -6,6 +6,9 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
     
+    // Path to the GeoJSON file
+    cablesGeoJSON: './data/Global_Submarine_Cables.geojson',  
+
     chapters: [
         {
             id: 'intro',
@@ -18,8 +21,30 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {
+                // Add the cables layer to the map when this chapter is entered
+                map.on('load', function() {
+                    map.addSource('cables', {
+                        'type': 'geojson',
+                        'data': config.cablesGeoJSON
+                    });
+
+                    map.addLayer({
+                        'id': 'cables-layer',
+                        'type': 'line',
+                        'source': 'cables',
+                        'paint': {
+                            'line-color': '#ff5733',
+                            'line-width': 2
+                        }
+                    });
+                });
+            },
+            onChapterExit: function() {
+                // Optionally remove the cables layer when exiting this chapter
+                map.removeLayer('cables-layer');
+                map.removeSource('cables');
+            }
         },
         {
             id: 'incident-matsu',
