@@ -5,25 +5,24 @@ const config = {
     theme: 'dark',
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
-    
+
     // Path to the GeoJSON file
-    cablesGeoJSON: './data/Global_Submarine_Cables.geojson',  
+    cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
 
     chapters: [
         {
             id: 'intro',
             title: 'Tracking Taiwan’s Undersea Cable Incidents',
-            image: './data/taiwan_cables_map.jpg', 
-            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline) ',
+            image: './data/taiwan_cables_map.jpg',
+            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
-                center: [121.5, 23.5], 
+                center: [121.5, 23.5],
                 zoom: 6,
                 pitch: 0,
                 bearing: 0
             },
             onChapterEnter: function() {
-                // Add the cables layer to the map when this chapter is entered
-                map.on('load', function() {
+                if (!map.getSource('cables')) {
                     map.addSource('cables', {
                         'type': 'geojson',
                         'data': config.cablesGeoJSON
@@ -38,21 +37,22 @@ const config = {
                             'line-width': 2
                         }
                     });
-                });
+                }
             },
             onChapterExit: function() {
-                // Optionally remove the cables layer when exiting this chapter
-                map.removeLayer('cables-layer');
-                map.removeSource('cables');
+                if (map.getLayer('cables-layer')) {
+                    map.removeLayer('cables-layer');
+                    map.removeSource('cables');
+                }
             }
         },
         {
             id: 'incident-matsu',
             title: 'Matsu Cable 1 Incident',
             image: './data/matsu_incident.jpg',
-            description: 'In February 2023, two underseas cables were severed connecting Taiwan's Matsu Islands to China. This disruption lead to internet shortages for weeks.',
+            description: 'In February 2023, two undersea cables were severed connecting Taiwan\'s Matsu Islands to China. This disruption led to internet shortages for weeks.',
             location: {
-                center: [119.97, 26.15], 
+                center: [119.97, 26.15],
                 zoom: 9.5,
                 pitch: 45,
                 bearing: 20
@@ -69,7 +69,7 @@ const config = {
                 The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.
             `,
             location: {
-                center: [122.3, 25.1], 
+                center: [122.3, 25.1],
                 zoom: 11,
                 pitch: 30,
                 bearing: -10
@@ -86,7 +86,7 @@ const config = {
                 Officials suspected intentional sabotage.
             `,
             location: {
-                center: [121.0, 21.8],  
+                center: [121.0, 21.8],
                 zoom: 8,
                 pitch: 40,
                 bearing: 15
