@@ -58,7 +58,8 @@ const config = {
                 bearing: 20
             },
             onChapterEnter: [],
-            onChapterExit: []
+            onChapterExit: [],
+            caption: 'Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).'
         },
         {
             id: 'incident-keelung',
