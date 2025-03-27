@@ -49,7 +49,7 @@ const config = {
         {
             id: 'incident-matsu',
             title: 'Matsu Cable 1 Incident',
-            image: './data/Matsu Islands.png',
+            image: './data/Matsu_Islands.png',
             description: 'In February 2023, two undersea cables were severed connecting Taiwan\'s Matsu Islands to China. This disruption led to internet shortages for weeks.',
             location: {
                 center: [119.97, 26.15],
