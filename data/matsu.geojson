@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Matsu Islands" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [119.9314, 26.1620],
+            [119.9730, 26.1620],
+            [119.9730, 26.2000],
+            [119.9314, 26.2000],
+            [119.9314, 26.1620]
+          ]
+        ]
+      }
+    }
+  ]
+}
