@@ -11,7 +11,7 @@ const config = {
             id: 'intro',
             title: 'Tracking Taiwan’s Undersea Cable Incidents | By Owen OConnell',
             image: './data/taiwan_cables_map.jpg', 
-            description: `aabccd',
+            description: 'This is an overview of Taiwan\'s undersea cable infrastructure and the incidents disrupting them.',
             location: {
                 center: [121.5, 23.5], 
                 zoom: 6,
@@ -25,7 +25,7 @@ const config = {
             id: 'incident-matsu',
             title: 'Matsu Cable 1 Incident',
             image: './data/matsu_incident.jpg',
-            description: 'cd',
+            description: 'On January 2024, a critical incident occurred involving the Matsu Cable 1, affecting communication in the region.',
             location: {
                 center: [119.97, 26.15], 
                 zoom: 10,
@@ -72,7 +72,7 @@ const config = {
         {
             id: 'conclusion',
             title: 'Conclusion',
-            description: `aa',
+            description: 'In conclusion, Taiwan\'s undersea cables are vital for global communication and must be secured.',
             location: {
                 center: [121.5, 23.5],
                 zoom: 6,
