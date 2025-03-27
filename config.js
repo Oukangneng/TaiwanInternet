@@ -25,7 +25,7 @@ const config = {
             id: 'incident-matsu',
             title: 'Matsu Cable 1 Incident',
             image: './data/matsu_incident.jpg',
-            description: `aaa',
+            description: 'cd',
             location: {
                 center: [119.97, 26.15], 
                 zoom: 10,
@@ -72,7 +72,7 @@ const config = {
         {
             id: 'conclusion',
             title: 'Conclusion',
-            description: `aa `,
+            description: `aa',
             location: {
                 center: [121.5, 23.5],
                 zoom: 6,
