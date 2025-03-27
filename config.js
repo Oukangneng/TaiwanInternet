@@ -6,8 +6,9 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    // Path to the GeoJSON file
+    // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
+    matsuGeoJSON: './data/matsu.geojson',  // ✅ Add the Matsu Islands GeoJSON
 
     chapters: [
         {
@@ -59,8 +60,34 @@ const config = {
                 pitch: 45,
                 bearing: 20
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {
+                // ✅ Add the Matsu Islands highlight layer
+                if (!map.getSource('matsu')) {
+                    map.addSource('matsu', {
+                        'type': 'geojson',
+                        'data': config.matsuGeoJSON
+                    });
+
+                    map.addLayer({
+                        'id': 'matsu-highlight',
+                        'type': 'fill',
+                        'source': 'matsu',
+                        'layout': {},
+                        'paint': {
+                            'fill-color': '#FFD700',  // Highlight color (gold)
+                            'fill-opacity': 0.6,
+                            'fill-outline-color': '#FF4500'  // Border color
+                        }
+                    });
+                }
+            },
+            onChapterExit: function() {
+                // ✅ Remove the Matsu Islands highlight layer
+                if (map.getLayer('matsu-highlight')) {
+                    map.removeLayer('matsu-highlight');
+                    map.removeSource('matsu');
+                }
+            }
         },
         {
             id: 'incident-keelung',
