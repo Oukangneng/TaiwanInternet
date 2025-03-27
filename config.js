@@ -50,10 +50,10 @@ const config = {
             id: 'incident-matsu',
             title: 'Matsu Cable 1 Incident',
             image: './data/matsu_incident.jpg',
-            description: 'On January 2024, a critical incident occurred involving the Matsu Cable 1, affecting communication in the region.',
+            description: 'In February 2023, two underseas cables were severed connecting Taiwan's Matsu Islands to China. This disruption lead to internet shortages for weeks.',
             location: {
                 center: [119.97, 26.15], 
-                zoom: 9,
+                zoom: 9.5,
                 pitch: 45,
                 bearing: 20
             },
