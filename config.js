@@ -70,7 +70,7 @@ const config = {
             `,
             location: {
                 center: [122.3, 25.1],
-                zoom: 11,
+                zoom: 10.5,
                 pitch: 30,
                 bearing: -10
             },
