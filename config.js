@@ -51,7 +51,6 @@ const config = {
             title: 'The Matsu Islands Incident (Part 1 of 2)',
             image: './data/Matsu.png',
             description: `
-                <img src='./data/Matsu.png' alt='Matsu Islands Incident' style='max-width: 100%;'>
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div>
                 <p>In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. This disruption led to internet shortages for weeks.</p>
             `,
@@ -69,7 +68,6 @@ const config = {
             title: 'APCN-2 Cable Disruption near Keelung',
             image: './data/keelung_incident.jpg',
             description: `
-                <img src='./data/keelung_incident.jpg' alt='Keelung Incident' style='max-width: 100%;'>
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).</div>
                 <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
             `,
@@ -87,7 +85,6 @@ const config = {
             title: 'Disruption South of Taiwan',
             image: './data/south_taiwan_incident.jpg',
             description: `
-                <img src='./data/south_taiwan_incident.jpg' alt='South Taiwan Incident' style='max-width: 100%;'>
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div>
                 <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
             `,
