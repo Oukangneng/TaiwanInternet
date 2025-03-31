@@ -108,11 +108,16 @@ const config = {
                     // Enable pointer-events after rendering the chart
                     container.style.pointerEvents = 'auto';
                 }
+
+                // Re-initialize scrollama after rendering D3 chart
+                setTimeout(() => {
+                    scroller.resize();  // Ensure scroll triggers properly
+                }, 500);
             },
             onChapterExit: function() {
                 const container = document.querySelector('#bar-chart-container');
                 if (container) {
-                    container.innerHTML = '';
+                    container.innerHTML = '';  // Clear chart on exit
                 }
             }
         },
