@@ -14,7 +14,10 @@ const config = {
             id: 'intro',
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             image: './data/taiwan_cables_map.jpg',
-            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
+            description: `
+                <p>This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)</p>
+                <div id="bar-chart-container" style="width: 100%; height: 500px; margin: 30px 0; background: #111;"></div>
+            `,
             location: {
                 center: [121.5, 23.5],
                 zoom: 6,
@@ -22,6 +25,7 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function() {
+                // Load the GeoJSON cables if not already loaded
                 if (!map.getSource('cables')) {
                     map.addSource('cables', {
                         'type': 'geojson',
@@ -38,11 +42,74 @@ const config = {
                         }
                     });
                 }
+
+                // D3 Bar Chart Rendering Logic
+                const container = document.querySelector('#bar-chart-container');
+                if (container) {
+                    container.innerHTML = '';  // Clear existing chart if any
+
+                    const data = [
+                        { year: "2015", incidents: 5 },
+                        { year: "2016", incidents: 7 },
+                        { year: "2017", incidents: 4 },
+                        { year: "2018", incidents: 6 },
+                        { year: "2019", incidents: 9 },
+                        { year: "2020", incidents: 11 },
+                        { year: "2021", incidents: 8 },
+                        { year: "2022", incidents: 13 },
+                        { year: "2023", incidents: 15 }
+                    ];
+
+                    const width = container.clientWidth;
+                    const height = 500;
+                    const margin = { top: 20, right: 30, bottom: 40, left: 60 };
+
+                    const svg = d3.select("#bar-chart-container")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .append("g")
+                        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                    const x = d3.scaleBand()
+                        .domain(data.map(d => d.year))
+                        .range([0, width - margin.left - margin.right])
+                        .padding(0.1);
+
+                    const y = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.incidents)])
+                        .nice()
+                        .range([height - margin.top - margin.bottom, 0]);
+
+                    // Add bars with animation
+                    svg.append("g")
+                        .selectAll("rect")
+                        .data(data)
+                        .enter().append("rect")
+                        .attr("x", d => x(d.year))
+                        .attr("y", d => y(0))
+                        .attr("width", x.bandwidth())
+                        .attr("height", 0)
+                        .attr("fill", "#1da1f2")
+                        .transition()
+                        .duration(800)
+                        .attr("y", d => y(d.incidents))
+                        .attr("height", d => height - margin.top - margin.bottom - y(d.incidents));
+
+                    // Add axes
+                    svg.append("g")
+                        .call(d3.axisLeft(y));
+
+                    svg.append("g")
+                        .attr("transform", `translate(0,${height - margin.bottom})`)
+                        .call(d3.axisBottom(x));
+                }
             },
             onChapterExit: function() {
-                if (map.getLayer('cables-layer')) {
-                    map.removeLayer('cables-layer');
-                    map.removeSource('cables');
+                // Clean up the chart when exiting the chapter
+                const container = document.querySelector('#bar-chart-container');
+                if (container) {
+                    container.innerHTML = '';
                 }
             }
         },
