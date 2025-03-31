@@ -187,57 +187,81 @@
         });
     });
 
-    // D3.js Bar Chart Rendering Logic
-    const data = [
-        { year: "2015", incidents: 5 },
-        { year: "2016", incidents: 7 },
-        { year: "2017", incidents: 4 },
-        { year: "2018", incidents: 6 },
-        { year: "2019", incidents: 9 },
-        { year: "2020", incidents: 11 },
-        { year: "2021", incidents: 8 },
-        { year: "2022", incidents: 13 },
-        { year: "2023", incidents: 15 }
-    ];
+    // D3.js Bar Chart Rendering Logic (Wrapped in a function for dynamic rendering)
+    function renderBarChart() {
+        const data = [
+            { year: "2015", incidents: 5 },
+            { year: "2016", incidents: 7 },
+            { year: "2017", incidents: 4 },
+            { year: "2018", incidents: 6 },
+            { year: "2019", incidents: 9 },
+            { year: "2020", incidents: 11 },
+            { year: "2021", incidents: 8 },
+            { year: "2022", incidents: 13 },
+            { year: "2023", incidents: 15 }
+        ];
 
-    const width = document.getElementById('bar-chart').clientWidth;
-    const height = 500;
-    const margin = { top: 20, right: 30, bottom: 40, left: 60 };
+        const width = document.getElementById('bar-chart').clientWidth;
+        const height = 500;
+        const margin = { top: 20, right: 30, bottom: 40, left: 60 };
 
-    const svg = d3.select("#bar-chart")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        const svg = d3.select("#bar-chart")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleBand()
-        .domain(data.map(d => d.year))
-        .range([0, width - margin.left - margin.right])
-        .padding(0.1);
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.year))
+            .range([0, width - margin.left - margin.right])
+            .padding(0.1);
 
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.incidents)])
-        .nice()
-        .range([height - margin.top - margin.bottom, 0]);
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.incidents)])
+            .nice()
+            .range([height - margin.top - margin.bottom, 0]);
 
-    svg.append("g")
-        .selectAll("rect")
-        .data(data)
-        .enter().append("rect")
-        .attr("x", d => x(d.year))
-        .attr("y", d => y(d.incidents))
-        .attr("width", x.bandwidth())
-        .attr("height", d => height - margin.top - margin.bottom - y(d.incidents))
-        .attr("fill", "#1da1f2");
+        svg.append("g")
+            .selectAll("rect")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", d => x(d.year))
+            .attr("y", d => y(d.incidents))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - margin.top - margin.bottom - y(d.incidents))
+            .attr("fill", "#1da1f2");
 
-    svg.append("g")
-        .call(d3.axisLeft(y));
+        svg.append("g")
+            .call(d3.axisLeft(y));
 
-    svg.append("g")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x));
+        svg.append("g")
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x));
+    }
 
+    // Scrollama setup
+    const scroller = scrollama();
+
+    function handleStepEnter(response) {
+        const chapterId = response.element.id;
+        if (chapterId === 'intro') {
+            renderBarChart(); // Render the bar chart when the intro section enters view
+        }
+    }
+
+    // Initialize Scrollama
+    scroller
+        .setup({
+            step: '.step',
+            offset: 0.7,
+        })
+        .onStepEnter(handleStepEnter);
+
+    // Resize the scroller on window resize
+    window.addEventListener('resize', () => {
+        scroller.resize();
+    });
 </script>
 
 </body>
