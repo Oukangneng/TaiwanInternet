@@ -104,15 +104,7 @@ const config = {
                     svg.append("g")
                         .attr("transform", `translate(0,${height - margin.bottom})`)
                         .call(d3.axisBottom(x));
-
-                    // Enable pointer-events after rendering the chart
-                    container.style.pointerEvents = 'auto';
                 }
-
-                // Re-initialize scrollama after rendering D3 chart
-                setTimeout(() => {
-                    scroller.resize();  // Ensure scroll triggers properly
-                }, 500);
             },
             onChapterExit: function() {
                 const container = document.querySelector('#bar-chart-container');
