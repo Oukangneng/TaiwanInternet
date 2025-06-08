@@ -8,7 +8,7 @@ const config = {
 
     // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: './data/cable_incidents.geojson',  // Added incident data path
+    incidentsGeoJSON: './data/cable_incidents.geojson',  // Incident points
 
     chapters: [
         {
@@ -39,7 +39,7 @@ const config = {
                         }
                     });
                 }
-                // Add cable incidents layer if not exists — persistent all time
+                // Add cable incidents as circles layer if not exists — persistent all time
                 if (!map.getSource('cable-incidents')) {
                     map.addSource('cable-incidents', {
                         'type': 'geojson',
@@ -47,11 +47,13 @@ const config = {
                     });
                     map.addLayer({
                         'id': 'cable-incidents-layer',
-                        'type': 'line',         // Changed from 'circle' to 'line'
+                        'type': 'circle',
                         'source': 'cable-incidents',
                         'paint': {
-                            'line-color': '#00ffff',
-                            'line-width': 3
+                            'circle-radius': 6,
+                            'circle-color': '#00ffff',
+                            'circle-stroke-width': 1,
+                            'circle-stroke-color': '#000'
                         }
                     });
                 }
