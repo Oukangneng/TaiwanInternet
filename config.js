@@ -6,9 +6,9 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    // Paths to GeoJSON files
-    cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: './data/cable_incidents.geojson',
+    // Absolute URLs to GeoJSON files hosted on GitHub Pages
+    cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
+    incidentsGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
     chapters: [
         {
@@ -24,7 +24,6 @@ const config = {
             },
             onChapterEnter: function() {
                 if (typeof map !== 'undefined') {
-                    // Add undersea cables (line layer)
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
                             type: 'geojson',
@@ -41,7 +40,6 @@ const config = {
                         });
                     }
 
-                    // Add cable incidents (point layer)
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'geojson',
@@ -59,7 +57,6 @@ const config = {
                             }
                         });
 
-                        // Optional: Add popups when clicking incident points
                         map.on('click', 'cable-incidents-layer', function (e) {
                             const props = e.features[0].properties;
                             const popupHTML = `
@@ -74,7 +71,6 @@ const config = {
                                 .addTo(map);
                         });
 
-                        // Optional: Change cursor on hover
                         map.on('mouseenter', 'cable-incidents-layer', () => {
                             map.getCanvas().style.cursor = 'pointer';
                         });
@@ -86,7 +82,6 @@ const config = {
             },
             onChapterExit: function() {
                 if (typeof map !== 'undefined') {
-                    // Remove cable line layer but keep point layer
                     if (map.getLayer('cables-layer')) {
                         map.removeLayer('cables-layer');
                     }
@@ -168,3 +163,4 @@ const config = {
         }
     ]
 };
+
