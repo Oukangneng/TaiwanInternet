@@ -109,7 +109,9 @@
 <div id="map"></div>
 <div id="story"></div>
 
+<!-- Load config.js -->
 <script src="./config.js"></script>
+
 <script>
     var layerTypes = {
         'fill': ['fill-opacity'],
@@ -144,7 +146,6 @@
     features.classList.add(alignments[config.alignment]);
     features.setAttribute('id', 'features');
 
-    // Add header if defined in config
     if (config.title || config.subtitle || config.byline) {
         var header = document.createElement('div');
         if (config.title) {
@@ -169,7 +170,6 @@
         }
     }
 
-    // Create chapters from config
     config.chapters.forEach((record, idx) => {
         var container = document.createElement('div');
         container.setAttribute('id', record.id);
@@ -202,7 +202,6 @@
     
     story.appendChild(features);
 
-    // Add footer if defined in config
     if (config.footer) {
         var footer = document.createElement('div');
         var footerText = document.createElement('p');
@@ -237,7 +236,7 @@
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    // Add the GeoJSON layer for the cables
+    // Add base cable layer
     map.on('load', function() {
         map.addSource('cables', {
             type: 'geojson',
@@ -249,7 +248,7 @@
             type: 'line',
             source: 'cables',
             paint: {
-                'line-color': '#ff5733', // Cable color (adjust to your liking)
+                'line-color': '#ff5733',
                 'line-width': 1
             }
         });
@@ -270,8 +269,12 @@
             response.element.classList.remove('active');
         });
     });
+
     window.addEventListener('resize', scroller.resize);
 </script>
+
+<!-- ✅ THIS LINE ADDED -->
+<script src="script.js"></script>
 
 </body>
 </html>
