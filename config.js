@@ -47,13 +47,11 @@ const config = {
                     });
                     map.addLayer({
                         'id': 'cable-incidents-layer',
-                        'type': 'circle', // Show markers as circles; change to 'symbol' if you have icons
+                        'type': 'line',         // Changed from 'circle' to 'line'
                         'source': 'cable-incidents',
                         'paint': {
-                            'circle-radius': 6,
-                            'circle-color': '#00ffff',
-                            'circle-stroke-width': 1,
-                            'circle-stroke-color': '#000'
+                            'line-color': '#00ffff',
+                            'line-width': 3
                         }
                     });
                 }
