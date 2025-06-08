@@ -11,13 +11,34 @@
           "Taipei Fisheries Gov Report (Chinese)",
           "MODA Report (English)"
         ],
-        "notes": "From Beimen side to Magong side"
+        "notes": "From 23°20.24′N, 119°51.07′E (Beimen side) to 23°22.18′N, 119°46.91′E (Magong side)"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [119.85117, 23.33733],
           [119.78183, 23.36967]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-02-25",
+        "cable": "Taiwan - Penghu No. 3",
+        "distance": "14.7 km from Beimen, Tainan",
+        "sources": [
+          "Taipei Times",
+          "Taipei Fisheries Gov Report (Chinese)",
+          "MODA Report (English)"
+        ],
+        "notes": "Severed at 3:03am, suspected Togolese flagged Hongtai, 8 Chinese crew members. From 23°17.34′N, 120°1.62′E (Beimen side) to 23°17.46′N, 120°1.19′E (Magong side)"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [120.027, 23.289],
+          [120.020, 23.291]
         ]
       }
     }
