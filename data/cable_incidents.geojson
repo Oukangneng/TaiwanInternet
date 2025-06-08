@@ -4,21 +4,37 @@
     {
       "type": "Feature",
       "properties": {
-        "date": "2025-03-14",
-        "cable": "Taiwan - Penghu No. 3",
-        "distance": "39.5 km from Magong",
-        "sources": [
-          "Taipei Fisheries Gov Report (Chinese)",
-          "MODA Report (English)"
-        ],
-        "notes": "From Beimen side to Magong side"
+        "type": "incident-line",
+        "cable": "Taiwan - Penghu No. 3"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [119.85117, 23.33733],  // Beimen side
-          [119.78183, 23.36967]   // Magong side
+          [119.85117, 23.33733],
+          [119.78183, 23.36967]
         ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "incident-point",
+        "name": "Beimen side"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [119.85117, 23.33733]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "incident-point",
+        "name": "Magong side"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [119.78183, 23.36967]
       }
     }
   ]
