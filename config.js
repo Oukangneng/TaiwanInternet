@@ -6,7 +6,7 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    // Path to the GeoJSON files
+    // Paths to GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
     incidentsGeoJSON: './data/cable_incidents.geojson',
 
@@ -24,52 +24,75 @@ const config = {
             },
             onChapterEnter: function() {
                 if (typeof map !== 'undefined') {
-                    // Add cables layer if not already added
+                    // Add undersea cables (line layer)
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
-                            'type': 'geojson',
-                            'data': config.cablesGeoJSON
+                            type: 'geojson',
+                            data: config.cablesGeoJSON
                         });
                         map.addLayer({
-                            'id': 'cables-layer',
-                            'type': 'line',
-                            'source': 'cables',
-                            'paint': {
+                            id: 'cables-layer',
+                            type: 'line',
+                            source: 'cables',
+                            paint: {
                                 'line-color': '#ff5733',
                                 'line-width': 2
                             }
                         });
                     }
 
-                    // Add cable incidents layer if not already added
-                    // This layer persists across chapters (never removed)
+                    // Add cable incidents (point layer)
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
-                            'type': 'geojson',
-                            'data': config.incidentsGeoJSON
+                            type: 'geojson',
+                            data: config.incidentsGeoJSON
                         });
                         map.addLayer({
-                            'id': 'cable-incidents-layer',
-                            'type': 'line', // you used 'line' instead of 'circle'
-                            'source': 'cable-incidents',
-                            'paint': {
-                                'line-color': '#00ffff',
-                                'line-width': 3
+                            id: 'cable-incidents-layer',
+                            type: 'circle',
+                            source: 'cable-incidents',
+                            paint: {
+                                'circle-radius': 6,
+                                'circle-color': '#00ffff',
+                                'circle-stroke-width': 1,
+                                'circle-stroke-color': '#000'
                             }
+                        });
+
+                        // Optional: Add popups when clicking incident points
+                        map.on('click', 'cable-incidents-layer', function (e) {
+                            const props = e.features[0].properties;
+                            const popupHTML = `
+                                <strong>${props.cable}</strong><br>
+                                <em>${props.date}</em><br>
+                                ${props.distance}<br>
+                                ${props.notes ? `<small>${props.notes}</small>` : ''}
+                            `;
+                            new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+                        });
+
+                        // Optional: Change cursor on hover
+                        map.on('mouseenter', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = 'pointer';
+                        });
+                        map.on('mouseleave', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = '';
                         });
                     }
                 }
             },
             onChapterExit: function() {
                 if (typeof map !== 'undefined') {
-                    // Remove cables layer only when exiting intro chapter
+                    // Remove cable line layer but keep point layer
                     if (map.getLayer('cables-layer')) {
                         map.removeLayer('cables-layer');
                     }
                     if (map.getSource('cables')) {
                         map.removeSource('cables');
                     }
-                    // DO NOT remove cable incidents layer to keep it persistent
                 }
             }
         },
