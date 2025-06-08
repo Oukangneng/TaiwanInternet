@@ -1,13 +1,14 @@
 const config = {
     style: 'mapbox://styles/mapbox/dark-v11',
-    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtNnh0aHNsODB5ZjcyanE4NTYwMjRrZDcifQ.jIUeVxkI7mayEkFCKHcgKw',  
+    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtNnh0aHNsODB5ZjcyanE4NTYwMjRrZDcifQ.jIUeVxkI7mayEkFCKHcgKw',
     showMarkers: false,
     theme: 'dark',
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
+    // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: './data/cable_incidents.geojson',
+    incidentsGeoJSON: './data/cable_incidents.geojson',  // Added incident data path
 
     chapters: [
         {
@@ -22,12 +23,12 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function() {
+                // Add cables layer if not exists
                 if (!map.getSource('cables')) {
                     map.addSource('cables', {
                         'type': 'geojson',
                         'data': config.cablesGeoJSON
                     });
-
                     map.addLayer({
                         'id': 'cables-layer',
                         'type': 'line',
@@ -38,34 +39,68 @@ const config = {
                         }
                     });
                 }
-
-                // Add cable incidents layer permanently here
+                // Add cable incidents layer if not exists — persistent all time
                 if (!map.getSource('cable-incidents')) {
                     map.addSource('cable-incidents', {
                         'type': 'geojson',
                         'data': config.incidentsGeoJSON
                     });
-
                     map.addLayer({
                         'id': 'cable-incidents-layer',
-                        'type': 'line',
+                        'type': 'circle', // Show markers as circles; change to 'symbol' if you have icons
                         'source': 'cable-incidents',
                         'paint': {
-                            'line-color': '#00ffff',
-                            'line-width': 3
+                            'circle-radius': 6,
+                            'circle-color': '#00ffff',
+                            'circle-stroke-width': 1,
+                            'circle-stroke-color': '#000'
                         }
                     });
                 }
             },
             onChapterExit: function() {
+                // Remove cables layer on exit
                 if (map.getLayer('cables-layer')) {
                     map.removeLayer('cables-layer');
                     map.removeSource('cables');
                 }
-                // NOTE: Do NOT remove cable-incidents-layer here — keep it visible permanently
+                // DO NOT remove cable incidents layer — keep markers persistent
             }
         },
-
+        {
+            id: 'incident-matsu',
+            title: 'The Matsu Islands Incident (Part 1 of 2)',
+            image: './data/Matsu.png',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div>
+                <p>In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. This disruption led to internet shortages for weeks.</p>
+            `,
+            location: {
+                center: [119.97, 26.15],
+                zoom: 9.5,
+                pitch: 45,
+                bearing: 20
+            },
+            onChapterEnter: [],
+            onChapterExit: []
+        },
+        {
+            id: 'incident-keelung',
+            title: 'APCN-2 Cable Disruption near Keelung',
+            image: './data/keelung_incident.jpg',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).</div>
+                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
+            `,
+            location: {
+                center: [122.3, 25.1],
+                zoom: 10.5,
+                pitch: 30,
+                bearing: -10
+            },
+            onChapterEnter: [],
+            onChapterExit: []
+        },
         {
             id: 'incident-south',
             title: 'Disruption South of Taiwan',
@@ -80,14 +115,9 @@ const config = {
                 pitch: 40,
                 bearing: 15
             },
-            onChapterEnter: function () {
-                // Removed cable-incidents layer code here
-            },
-            onChapterExit: function () {
-                // Removed removal of cable-incidents layer here
-            }
+            onChapterEnter: [],
+            onChapterExit: []
         },
-
         {
             id: 'conclusion',
             title: 'Conclusion',
