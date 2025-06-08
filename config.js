@@ -8,7 +8,7 @@ const config = {
 
     // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: './data/cable_incidents.geojson',  // Added incident data path
+    incidentsGeoJSON: './data/cable_incidents.geojson',
 
     chapters: [
         {
@@ -23,46 +23,54 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function() {
-                // Add cables layer if not exists
-                if (!map.getSource('cables')) {
-                    map.addSource('cables', {
-                        'type': 'geojson',
-                        'data': config.cablesGeoJSON
-                    });
-                    map.addLayer({
-                        'id': 'cables-layer',
-                        'type': 'line',
-                        'source': 'cables',
-                        'paint': {
-                            'line-color': '#ff5733',
-                            'line-width': 2
-                        }
-                    });
-                }
-                // Add cable incidents layer if not exists — persistent all time
-                if (!map.getSource('cable-incidents')) {
-                    map.addSource('cable-incidents', {
-                        'type': 'geojson',
-                        'data': config.incidentsGeoJSON
-                    });
-                    map.addLayer({
-                        'id': 'cable-incidents-layer',
-                        'type': 'line',         // Changed from 'circle' to 'line'
-                        'source': 'cable-incidents',
-                        'paint': {
-                            'line-color': '#00ffff',
-                            'line-width': 3
-                        }
-                    });
+                if (typeof map !== 'undefined') {
+                    // Add cables layer if not already added
+                    if (!map.getSource('cables')) {
+                        map.addSource('cables', {
+                            'type': 'geojson',
+                            'data': config.cablesGeoJSON
+                        });
+                        map.addLayer({
+                            'id': 'cables-layer',
+                            'type': 'line',
+                            'source': 'cables',
+                            'paint': {
+                                'line-color': '#ff5733',
+                                'line-width': 2
+                            }
+                        });
+                    }
+
+                    // Add cable incidents layer if not already added
+                    // This layer persists across chapters (never removed)
+                    if (!map.getSource('cable-incidents')) {
+                        map.addSource('cable-incidents', {
+                            'type': 'geojson',
+                            'data': config.incidentsGeoJSON
+                        });
+                        map.addLayer({
+                            'id': 'cable-incidents-layer',
+                            'type': 'line', // you used 'line' instead of 'circle'
+                            'source': 'cable-incidents',
+                            'paint': {
+                                'line-color': '#00ffff',
+                                'line-width': 3
+                            }
+                        });
+                    }
                 }
             },
             onChapterExit: function() {
-                // Remove cables layer on exit
-                if (map.getLayer('cables-layer')) {
-                    map.removeLayer('cables-layer');
-                    map.removeSource('cables');
+                if (typeof map !== 'undefined') {
+                    // Remove cables layer only when exiting intro chapter
+                    if (map.getLayer('cables-layer')) {
+                        map.removeLayer('cables-layer');
+                    }
+                    if (map.getSource('cables')) {
+                        map.removeSource('cables');
+                    }
+                    // DO NOT remove cable incidents layer to keep it persistent
                 }
-                // DO NOT remove cable incidents layer — keep markers persistent
             }
         },
         {
@@ -70,7 +78,9 @@ const config = {
             title: 'The Matsu Islands Incident (Part 1 of 2)',
             image: './data/Matsu.png',
             description: `
-                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div>
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
+                </div>
                 <p>In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. This disruption led to internet shortages for weeks.</p>
             `,
             location: {
@@ -79,15 +89,17 @@ const config = {
                 pitch: 45,
                 bearing: 20
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {},
+            onChapterExit: function() {}
         },
         {
             id: 'incident-keelung',
             title: 'APCN-2 Cable Disruption near Keelung',
             image: './data/keelung_incident.jpg',
             description: `
-                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).</div>
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).
+                </div>
                 <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
             `,
             location: {
@@ -96,15 +108,17 @@ const config = {
                 pitch: 30,
                 bearing: -10
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {},
+            onChapterExit: function() {}
         },
         {
             id: 'incident-south',
             title: 'Disruption South of Taiwan',
             image: './data/south_taiwan_incident.jpg',
             description: `
-                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div>
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo showing the location of the cable disruption south of Taiwan (Late 2024).
+                </div>
                 <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
             `,
             location: {
@@ -113,8 +127,8 @@ const config = {
                 pitch: 40,
                 bearing: 15
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {},
+            onChapterExit: function() {}
         },
         {
             id: 'conclusion',
@@ -126,8 +140,8 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: [],
-            onChapterExit: []
+            onChapterEnter: function() {},
+            onChapterExit: function() {}
         }
     ]
 };
