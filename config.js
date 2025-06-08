@@ -6,8 +6,9 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
+    // Path to the GeoJSON files
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: './data/cable_incidents.geojson',
+    incidentsGeoJSON: './data/cable_incidents.geojson',  // Added incident data path
 
     chapters: [
         {
@@ -22,56 +23,48 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function() {
-                function addLayers() {
-                    if (!map.getSource('cables')) {
-                        map.addSource('cables', {
-                            type: 'geojson',
-                            data: config.cablesGeoJSON
-                        });
-                        map.addLayer({
-                            id: 'cables-layer',
-                            type: 'line',
-                            source: 'cables',
-                            paint: {
-                                'line-color': '#ff5733',
-                                'line-width': 2
-                            }
-                        });
-                    }
-                    if (!map.getSource('cable-incidents')) {
-                        map.addSource('cable-incidents', {
-                            type: 'geojson',
-                            data: config.incidentsGeoJSON
-                        });
-                        map.addLayer({
-                            id: 'cable-incidents-layer',
-                            type: 'circle',  // Use circle to show points
-                            source: 'cable-incidents',
-                            paint: {
-                                'circle-radius': 6,
-                                'circle-color': '#00ffff',
-                                'circle-stroke-width': 1,
-                                'circle-stroke-color': '#000'
-                            }
-                        });
-                    }
+                // Add cables layer if not exists
+                if (!map.getSource('cables')) {
+                    map.addSource('cables', {
+                        'type': 'geojson',
+                        'data': config.cablesGeoJSON
+                    });
+                    map.addLayer({
+                        'id': 'cables-layer',
+                        'type': 'line',
+                        'source': 'cables',
+                        'paint': {
+                            'line-color': '#ff5733',
+                            'line-width': 2
+                        }
+                    });
                 }
-
-                if (map.loaded()) {
-                    addLayers();
-                } else {
-                    map.on('load', addLayers);
+                // Add cable incidents layer if not exists — persistent all time
+                if (!map.getSource('cable-incidents')) {
+                    map.addSource('cable-incidents', {
+                        'type': 'geojson',
+                        'data': config.incidentsGeoJSON
+                    });
+                    map.addLayer({
+                        'id': 'cable-incidents-layer',
+                        'type': 'line',         // Changed from 'circle' to 'line'
+                        'source': 'cable-incidents',
+                        'paint': {
+                            'line-color': '#00ffff',
+                            'line-width': 3
+                        }
+                    });
                 }
             },
             onChapterExit: function() {
+                // Remove cables layer on exit
                 if (map.getLayer('cables-layer')) {
                     map.removeLayer('cables-layer');
                     map.removeSource('cables');
                 }
-                // Keep incidents layer persistent
+                // DO NOT remove cable incidents layer — keep markers persistent
             }
         },
-        // Other chapters unchanged
         {
             id: 'incident-matsu',
             title: 'The Matsu Islands Incident (Part 1 of 2)',
