@@ -7,7 +7,7 @@ const config = {
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
     cablesGeoJSON: './data/Global_Submarine_Cables.geojson',
-    **incidentsGeoJSON: './data/cable_incidents.geojson',** // ✅ ADD this line
+    incidentsGeoJSON: './data/cable_incidents.geojson',
 
     chapters: [
         {
@@ -38,12 +38,31 @@ const config = {
                         }
                     });
                 }
+
+                // Add cable incidents layer permanently here
+                if (!map.getSource('cable-incidents')) {
+                    map.addSource('cable-incidents', {
+                        'type': 'geojson',
+                        'data': config.incidentsGeoJSON
+                    });
+
+                    map.addLayer({
+                        'id': 'cable-incidents-layer',
+                        'type': 'line',
+                        'source': 'cable-incidents',
+                        'paint': {
+                            'line-color': '#00ffff',
+                            'line-width': 3
+                        }
+                    });
+                }
             },
             onChapterExit: function() {
                 if (map.getLayer('cables-layer')) {
                     map.removeLayer('cables-layer');
                     map.removeSource('cables');
                 }
+                // NOTE: Do NOT remove cable-incidents-layer here — keep it visible permanently
             }
         },
 
@@ -62,30 +81,10 @@ const config = {
                 bearing: 15
             },
             onChapterEnter: function () {
-                // ✅ ADD these lines
-                if (!map.getSource('cable-incidents')) {
-                    map.addSource('cable-incidents', {
-                        'type': 'geojson',
-                        'data': config.incidentsGeoJSON
-                    });
-
-                    map.addLayer({
-                        'id': 'cable-incidents-layer',
-                        'type': 'line',
-                        'source': 'cable-incidents',
-                        'paint': {
-                            'line-color': '#00ffff',
-                            'line-width': 3
-                        }
-                    });
-                }
+                // Removed cable-incidents layer code here
             },
             onChapterExit: function () {
-                // ✅ REMOVE the layer and source on exit
-                if (map.getLayer('cable-incidents-layer')) {
-                    map.removeLayer('cable-incidents-layer');
-                    map.removeSource('cable-incidents');
-                }
+                // Removed removal of cable-incidents layer here
             }
         },
 
