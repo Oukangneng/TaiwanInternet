@@ -121,7 +121,7 @@ const config = {
             `,
             location: {
                 center: [122.3, 25.1],
-                zoom: 10.5,
+                zoom: 9,
                 pitch: 30,
                 bearing: -10
             },
