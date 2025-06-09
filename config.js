@@ -1,300 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>Tracking Taiwan Undersea Cable Incidents</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    
-    <!-- Mapbox and Scrollama -->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
-    <script src="https://unpkg.com/scrollama"></script>
+const config = {
+    style: 'mapbox://styles/mapbox/dark-v11',
+    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtYm9mMjJpdzE2ZTYyaXE5Mmx2Yng5aHoifQ.ptuVPXZ7BVI4vsG1aY70Gw',
+    showMarkers: false,
+    theme: 'dark',
+    alignment: 'left',
+    footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    <!-- Social media metadata -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Tracking Taiwan Undersea Cable Incidents">
-    <meta name="twitter:description" content="A visualization of Taiwan's undersea cable incidents and their impact.">
-    <meta name="twitter:image" content="./data/taiwan_cables_map.jpg">
-    <link rel="icon" href="./data/taiwan_cables_map.jpg">
+    cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
 
-    <style>
-        @import url('https://rsms.me/inter/inter.css');
-        html { font-family: 'Inter', sans-serif; }
-        @supports (font-variation-settings: normal) {
-            html { font-family: 'Inter var', sans-serif; }
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Inter", sans-serif;
-            color: #fafafa;
-            background-color: #000;
-        }
-        a, a:hover, a:visited {
-            color: #1da1f2;
-        }
-        #map {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -5;
-        }
-        #header {
-            margin: 3vh auto;
-            width: 90vw;
-            padding: 2vh;
-            text-align: center;
-        }
-        #footer {
-            width: 100%;
-            min-height: 5vh;
-            padding: 2vh;
-            text-align: center;
-            font-size: 14px;
-            background: #111;
-        }
-        #features {
-            padding-top: 10vh;
-            padding-bottom: 10vh;
-            z-index: 100;
-        }
-        .centered {
-            width: 50vw;
-            margin: 0 auto;
-        }
-        .lefty {
-            width: 33vw;
-            margin-left: 5vw;
-        }
-        .righty {
-            width: 33vw;
-            margin-left: 62vw;
-        }
-        .step {
-            padding-bottom: 50vh;
-            opacity: 0.25;
-            transition: opacity 0.5s;
-        }
-        .step.active {
-            opacity: 0.9;
-        }
-        .step div {
-            padding: 25px 50px;
-            line-height: 1.6;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-        }
-        .step img {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-        @media (max-width: 750px) {
-            #features {
-                width: 90vw;
-                margin: 0 auto;
+    chapters: [
+        {
+            id: 'intro',
+            title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
+            image: './data/taiwan_cables_map.jpg',
+            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
+            location: {
+                center: [121.5, 23.5],
+                zoom: 6,
+                pitch: 0,
+                bearing: 0
+            },
+            onChapterEnter: function () {
+                if (typeof map !== 'undefined') {
+                    if (!map.getSource('cables')) {
+                        map.addSource('cables', {
+                            type: 'geojson',
+                            data: config.cablesGeoJSON
+                        });
+                        map.addLayer({
+                            id: 'cables-layer',
+                            type: 'line',
+                            source: 'cables',
+                            paint: {
+                                'line-color': '#ff5733',
+                                'line-width': 2
+                            }
+                        });
+                    }
+
+                    if (!map.getSource('cable-incidents')) {
+                        map.addSource('cable-incidents', {
+                            type: 'vector',
+                            url: 'mapbox://owenoc.740hanei'
+                        });
+                        map.addLayer({
+                            id: 'cable-incidents-layer',
+                            type: 'circle',
+                            source: 'cable-incidents',
+                            'source-layer': 'taiwan-cable-incidentx-d8tdes',
+                            paint: {
+                                'circle-radius': 6,
+                                'circle-color': '#ff0000',
+                                'circle-stroke-width': 1,
+                                'circle-stroke-color': '#000'
+                            }
+                        });
+
+                        map.on('click', 'cable-incidents-layer', function (e) {
+                            const props = e.features[0].properties;
+                            const popupHTML = `
+                                <strong>${props.cable}</strong><br>
+                                <em>${props.date}</em><br>
+                                ${props.distance}<br>
+                                ${props.notes ? `<small>${props.notes}</small>` : ''}
+                            `;
+                            new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+                        });
+
+                        map.on('mouseenter', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = 'pointer';
+                        });
+                        map.on('mouseleave', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = '';
+                        });
+                    }
+                }
+            },
+            onChapterExit: function () {
+                if (typeof map !== 'undefined') {
+                    if (map.getLayer('cables-layer')) {
+                        map.removeLayer('cables-layer');
+                    }
+                    if (map.getSource('cables')) {
+                        map.removeSource('cables');
+                    }
+                }
             }
+        },
+        {
+            id: 'incident-matsu',
+            title: 'The Matsu Islands Incident (Part 1 of 2)',
+            image: './data/Matsu.png',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
+                </div>
+                <p>In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. This disruption led to internet shortages for weeks.</p>
+            `,
+            location: {
+                center: [119.97, 26.15],
+                zoom: 9.5,
+                pitch: 45,
+                bearing: 20
+            },
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
+        },
+        {
+            id: 'incident-keelung',
+            title: 'APCN-2 Cable Disruption near Keelung',
+            image: './data/keelung_incident.jpg',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).
+                </div>
+                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
+            `,
+            location: {
+                center: [122.3, 25.1],
+                zoom: 10.5,
+                pitch: 30,
+                bearing: -10
+            },
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
+        },
+        {
+            id: 'incident-south',
+            title: 'Disruption South of Taiwan',
+            image: './data/south_taiwan_incident.jpg',
+            description: `
+                <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
+                    Photo showing the location of the cable disruption south of Taiwan (Late 2024).
+                </div>
+                <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
+            `,
+            location: {
+                center: [121.0, 21.8],
+                zoom: 8,
+                pitch: 40,
+                bearing: 15
+            },
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
+        },
+        {
+            id: 'conclusion',
+            title: 'Conclusion',
+            description: 'In conclusion, Taiwan\'s undersea cables are vital for global communication and must be secured.',
+            location: {
+                center: [121.5, 23.5],
+                zoom: 6,
+                pitch: 0,
+                bearing: 0
+            },
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
         }
-    </style>
-</head>
-<body>
-
-<div id="map"></div>
-<div id="story"></div>
-
-<!-- Load config.js -->
-<script src="./config.js"></script>
-
-<script>
-    var layerTypes = {
-        'fill': ['fill-opacity'],
-        'line': ['line-opacity'],
-        'circle': ['circle-opacity', 'circle-stroke-opacity'],
-        'symbol': ['icon-opacity', 'text-opacity'],
-        'raster': ['raster-opacity'],
-        'fill-extrusion': ['fill-extrusion-opacity'],
-        'heatmap': ['heatmap-opacity']
-    };
-
-    var alignments = {
-        'left': 'lefty',
-        'center': 'centered',
-        'right': 'righty'
-    };
-
-    function getLayerPaintType(layer) {
-        var layerType = map.getLayer(layer).type;
-        return layerTypes[layerType];
-    }
-
-    function setLayerOpacity(layer) {
-        var paintProps = getLayerPaintType(layer.layer);
-        paintProps.forEach(function(prop) {
-            map.setPaintProperty(layer.layer, prop, layer.opacity);
-        });
-    }
-
-    var story = document.getElementById('story');
-    var features = document.createElement('div');
-    features.classList.add(alignments[config.alignment]);
-    features.setAttribute('id', 'features');
-
-    if (config.title || config.subtitle || config.byline) {
-        var header = document.createElement('div');
-        if (config.title) {
-            var titleText = document.createElement('h1');
-            titleText.innerText = config.title;
-            header.appendChild(titleText);
-        }
-        if (config.subtitle) {
-            var subtitleText = document.createElement('h2');
-            subtitleText.innerText = config.subtitle;
-            header.appendChild(subtitleText);
-        }
-        if (config.byline) {
-            var bylineText = document.createElement('p');
-            bylineText.innerText = config.byline;
-            header.appendChild(bylineText);
-        }
-        if (header.innerText.length > 0) {
-            header.classList.add(config.theme);
-            header.setAttribute('id', 'header');
-            story.appendChild(header);
-        }
-    }
-
-    config.chapters.forEach((record, idx) => {
-        var container = document.createElement('div');
-        container.setAttribute('id', record.id);
-        container.classList.add('step');
-        if (idx === 0) {
-            container.classList.add('active');
-        }
-        var chapter = document.createElement('div');
-        
-        if (record.title) {
-            var title = document.createElement('h3');
-            title.innerText = record.title;
-            chapter.appendChild(title);
-        }
-        if (record.image) {
-            var image = new Image();
-            image.src = record.image;
-            chapter.appendChild(image);
-        }
-        if (record.description) {
-            var text = document.createElement('p');
-            text.innerHTML = record.description;
-            chapter.appendChild(text);
-        }
-
-        chapter.classList.add(config.theme);
-        container.appendChild(chapter);
-        features.appendChild(container);
-    });
-    
-    story.appendChild(features);
-
-    if (config.footer) {
-        var footer = document.createElement('div');
-        var footerText = document.createElement('p');
-        footerText.innerHTML = config.footer;
-        footer.appendChild(footerText);
-        footer.classList.add(config.theme);
-        footer.setAttribute('id', 'footer');
-        story.appendChild(footer);
-    }
-
-    // Map setup
-    mapboxgl.accessToken = config.accessToken;
-    const transformRequest = (url) => {
-        const hasQuery = url.indexOf("?") !== -1;
-        const suffix = hasQuery ? "&pluginName=MapTaiwanCables" : "?pluginName=MapTaiwanCables";
-        return { url: url + suffix };
-    };
-
-    var map = new mapboxgl.Map({
-        container: 'map',
-        style: config.style,
-        center: config.chapters[0].location.center,
-        zoom: config.chapters[0].location.zoom,
-        bearing: config.chapters[0].location.bearing,
-        pitch: config.chapters[0].location.pitch,
-        scrollZoom: false,
-        transformRequest: transformRequest
-    });
-
-    var marker = new mapboxgl.Marker();
-    if (config.showMarkers) {
-        marker.setLngLat(config.chapters[0].location.center).addTo(map);
-    }
-
-    // Add base cable layer and your vector source/layer
-    map.on('load', function() {
-        // Base cable GeoJSON layer
-        map.addSource('cables', {
-            type: 'geojson',
-            data: './data/Global_Submarine_Cables.geojson'
-        });
-
-        map.addLayer({
-            id: 'cables-layer',
-            type: 'line',
-            source: 'cables',
-            paint: {
-                'line-color': '#ff5733',
-                'line-width': 1
-            }
-        });
-
-        // Your vector tileset source for incidents
-        map.addSource('debug-incidents', {
-            type: 'vector',
-            url: 'mapbox://owenoc.740hanei'
-        });
-
-        // Circle layer for the incidents points
-        map.addLayer({
-            id: 'debug-layer',
-            type: 'circle',
-            source: 'debug-incidents',
-            'source-layer': 'taiwan-cable-incidentx-d8tdes',
-            paint: {
-                'circle-radius': 10,
-                'circle-color': '#ff0000'
-            }
-        });
-
-        // Scrollama setup
-        var scroller = scrollama();
-        scroller.setup({
-            step: '.step',
-            offset: 0.5,
-            progress: true
-        })
-        .onStepEnter(response => {
-            var chapter = config.chapters.find(chap => chap.id === response.element.id);
-            response.element.classList.add('active');
-            map.flyTo(chapter.location);
-        })
-        .onStepExit(response => {
-            response.element.classList.remove('active');
-        });
-
-        window.addEventListener('resize', scroller.resize);
-    });
-
-</script>
-
-<!-- ✅ THIS LINE ADDED -->
-<script src="script.js"></script>
-
-</body>
-</html>
+    ]
+};
