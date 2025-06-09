@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Tracking Taiwan Undersea Cable Incidents</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-
+    
     <!-- Mapbox and Scrollama -->
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
@@ -61,9 +61,18 @@
             padding-bottom: 10vh;
             z-index: 100;
         }
-        .centered { width: 50vw; margin: 0 auto; }
-        .lefty { width: 33vw; margin-left: 5vw; }
-        .righty { width: 33vw; margin-left: 62vw; }
+        .centered {
+            width: 50vw;
+            margin: 0 auto;
+        }
+        .lefty {
+            width: 33vw;
+            margin-left: 5vw;
+        }
+        .righty {
+            width: 33vw;
+            margin-left: 62vw;
+        }
         .step {
             padding-bottom: 50vh;
             opacity: 0.25;
@@ -99,10 +108,12 @@
 
 <div id="map"></div>
 <div id="story"></div>
+
+<!-- Load config.js -->
 <script src="./config.js"></script>
 
 <script>
-    const layerTypes = {
+    var layerTypes = {
         'fill': ['fill-opacity'],
         'line': ['line-opacity'],
         'circle': ['circle-opacity', 'circle-stroke-opacity'],
@@ -112,42 +123,43 @@
         'heatmap': ['heatmap-opacity']
     };
 
-    const alignments = {
+    var alignments = {
         'left': 'lefty',
         'center': 'centered',
         'right': 'righty'
     };
 
     function getLayerPaintType(layer) {
-        return layerTypes[map.getLayer(layer).type];
+        var layerType = map.getLayer(layer).type;
+        return layerTypes[layerType];
     }
 
     function setLayerOpacity(layer) {
-        const props = getLayerPaintType(layer.layer);
-        props.forEach(prop => {
+        var paintProps = getLayerPaintType(layer.layer);
+        paintProps.forEach(function(prop) {
             map.setPaintProperty(layer.layer, prop, layer.opacity);
         });
     }
 
-    const story = document.getElementById('story');
-    const features = document.createElement('div');
+    var story = document.getElementById('story');
+    var features = document.createElement('div');
     features.classList.add(alignments[config.alignment]);
     features.setAttribute('id', 'features');
 
     if (config.title || config.subtitle || config.byline) {
-        const header = document.createElement('div');
+        var header = document.createElement('div');
         if (config.title) {
-            const titleText = document.createElement('h1');
+            var titleText = document.createElement('h1');
             titleText.innerText = config.title;
             header.appendChild(titleText);
         }
         if (config.subtitle) {
-            const subtitleText = document.createElement('h2');
+            var subtitleText = document.createElement('h2');
             subtitleText.innerText = config.subtitle;
             header.appendChild(subtitleText);
         }
         if (config.byline) {
-            const bylineText = document.createElement('p');
+            var bylineText = document.createElement('p');
             bylineText.innerText = config.byline;
             header.appendChild(bylineText);
         }
@@ -159,37 +171,40 @@
     }
 
     config.chapters.forEach((record, idx) => {
-        const container = document.createElement('div');
+        var container = document.createElement('div');
         container.setAttribute('id', record.id);
         container.classList.add('step');
-        if (idx === 0) container.classList.add('active');
-
-        const chapter = document.createElement('div');
+        if (idx === 0) {
+            container.classList.add('active');
+        }
+        var chapter = document.createElement('div');
+        
         if (record.title) {
-            const title = document.createElement('h3');
+            var title = document.createElement('h3');
             title.innerText = record.title;
             chapter.appendChild(title);
         }
         if (record.image) {
-            const image = new Image();
+            var image = new Image();
             image.src = record.image;
             chapter.appendChild(image);
         }
         if (record.description) {
-            const text = document.createElement('p');
+            var text = document.createElement('p');
             text.innerHTML = record.description;
             chapter.appendChild(text);
         }
+
         chapter.classList.add(config.theme);
         container.appendChild(chapter);
         features.appendChild(container);
     });
-
+    
     story.appendChild(features);
 
     if (config.footer) {
-        const footer = document.createElement('div');
-        const footerText = document.createElement('p');
+        var footer = document.createElement('div');
+        var footerText = document.createElement('p');
         footerText.innerHTML = config.footer;
         footer.appendChild(footerText);
         footer.classList.add(config.theme);
@@ -197,9 +212,15 @@
         story.appendChild(footer);
     }
 
+    // Map setup
     mapboxgl.accessToken = config.accessToken;
+    const transformRequest = (url) => {
+        const hasQuery = url.indexOf("?") !== -1;
+        const suffix = hasQuery ? "&pluginName=MapTaiwanCables" : "?pluginName=MapTaiwanCables";
+        return { url: url + suffix };
+    };
 
-    const map = new mapboxgl.Map({
+    var map = new mapboxgl.Map({
         container: 'map',
         style: config.style,
         center: config.chapters[0].location.center,
@@ -207,20 +228,73 @@
         bearing: config.chapters[0].location.bearing,
         pitch: config.chapters[0].location.pitch,
         scrollZoom: false,
-        transformRequest: (url) => {
-            const suffix = url.includes('?') ? "&pluginName=MapTaiwanCables" : "?pluginName=MapTaiwanCables";
-            return { url: url + suffix };
-        }
+        transformRequest: transformRequest
     });
 
-    const marker = new mapboxgl.Marker();
+    var marker = new mapboxgl.Marker();
     if (config.showMarkers) {
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    // <-- Removed entire map.on('load', ...) block here -->
+    // Add base cable layer and your vector source/layer
+    map.on('load', function() {
+        // Base cable GeoJSON layer
+        map.addSource('cables', {
+            type: 'geojson',
+            data: './data/Global_Submarine_Cables.geojson'
+        });
+
+        map.addLayer({
+            id: 'cables-layer',
+            type: 'line',
+            source: 'cables',
+            paint: {
+                'line-color': '#ff5733',
+                'line-width': 1
+            }
+        });
+
+        // Your vector tileset source for incidents
+        map.addSource('debug-incidents', {
+            type: 'vector',
+            url: 'mapbox://owenoc.740hanei'
+        });
+
+        // Circle layer for the incidents points
+        map.addLayer({
+            id: 'debug-layer',
+            type: 'circle',
+            source: 'debug-incidents',
+            'source-layer': 'taiwan-cable-incidentx-d8tdes',
+            paint: {
+                'circle-radius': 10,
+                'circle-color': '#ff0000'
+            }
+        });
+
+        // Scrollama setup
+        var scroller = scrollama();
+        scroller.setup({
+            step: '.step',
+            offset: 0.5,
+            progress: true
+        })
+        .onStepEnter(response => {
+            var chapter = config.chapters.find(chap => chap.id === response.element.id);
+            response.element.classList.add('active');
+            map.flyTo(chapter.location);
+        })
+        .onStepExit(response => {
+            response.element.classList.remove('active');
+        });
+
+        window.addEventListener('resize', scroller.resize);
+    });
 
 </script>
+
+<!-- ✅ THIS LINE ADDED -->
+<script src="script.js"></script>
 
 </body>
 </html>
