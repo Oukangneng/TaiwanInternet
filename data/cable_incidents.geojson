@@ -4,6 +4,58 @@
     {
       "type": "Feature",
       "properties": {
+        "date": "2025-01-03",
+        "cable": "Trans Pacific Express Cable System (TPE)",
+        "distance": "About 68 km off northeast Taiwan",
+        "notes": "Section S3S. Suspected Tanzania flagged XingShun 39. Source: New York Times, MODA Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.7892, 25.3787]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-01-15",
+        "cable": "Taiwan - Matsu No. 3 (TPKM3)",
+        "distance": "16.8 km from Dayuan station",
+        "notes": "Caoluo Nangan section. Natural deterioration. From 25°4.86′N, 121°6.03′E (Caotuo side) to 25°5.61′N, 121°4.52′E (Nangan side). Source: Taiwan Fisheries Gov Report, Taiwan News."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.0755, 25.081]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-01-23",
+        "cable": "East - Asia Cross-1 (EAC1)",
+        "distance": "Section D fault locations",
+        "notes": "Suspected earthquake. Coordinates: 22°26.5661'N, 121°44.2585'E and 23°27.9840'N, 122°19.7730'E. Source: Taiwan Fisheries Gov Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.7376, 22.4428]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-02-16",
+        "cable": "Taiwan - Matsu No. 2",
+        "distance": "About 30 km off the coast of Tamsui, New Taipei",
+        "notes": "Natural deterioration. Source: Focus Taiwan, MODA Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.7419, 25.4409]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "date": "2025-03-14",
         "cable": "Taiwan - Penghu No. 3",
         "distance": "39.5 km from Magong",
