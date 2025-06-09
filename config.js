@@ -12,8 +12,13 @@ const config = {
         {
             id: 'intro',
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
-            image: './data/taiwan_cables_map.jpg',
-            description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
+            image: '',
+            description: `
+  <p>This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)</p>
+  <div id="bar-chart-container" style="margin-top: 20px;">
+    <svg id="bar-chart" width="600" height="300"></svg>
+  </div>
+`,
             location: {
                 center: [120, 24],
                 zoom: 7,
