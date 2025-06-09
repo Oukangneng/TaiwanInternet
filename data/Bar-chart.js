@@ -1,11 +1,4 @@
-<!-- HTML -->
-<div id="bar-chart-container" style="width: 600px; margin: 40px auto;">
-  <h3 style="text-align: center;">Increase in Subsea Cable Incidents Near Taiwan, 2019–2025</h3>
-  <svg id="bar-chart" width="600" height="300"></svg>
-</div>
-
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
+function drawBarChart() {
   const data = [
     { year: 'Jan-June 2025', count: 12 },
     { year: '2024', count: 9 },
@@ -17,9 +10,12 @@
   ];
 
   const svg = d3.select("#bar-chart"),
-        margin = { top: 20, right: 20, bottom: 50, left: 120 },  // increased bottom margin for label
+        margin = { top: 20, right: 20, bottom: 50, left: 120 },
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
+
+  // Remove any existing content first if needed
+  svg.selectAll("*").remove();
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -39,7 +35,6 @@
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).ticks(6));
 
-  // Add x-axis label
   g.append("text")
     .attr("x", width / 2)
     .attr("y", height + margin.bottom - 10)
@@ -58,4 +53,5 @@
     .attr("height", y.bandwidth())
     .attr("width", d => x(d.count))
     .attr("fill", "#e63946");
-</script>
+}
+
