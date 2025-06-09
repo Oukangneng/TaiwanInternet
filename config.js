@@ -1,7 +1,7 @@
 const config = {
     style: 'mapbox://styles/mapbox/dark-v11',
     accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtYm9mMjJpdzE2ZTYyaXE5Mmx2Yng5aHoifQ.ptuVPXZ7BVI4vsG1aY70Gw',
-    showMarkers: true,
+    showMarkers: false,
     theme: 'dark',
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
