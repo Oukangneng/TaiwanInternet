@@ -15,7 +15,7 @@ const config = {
             image: './data/taiwan_cables_map.jpg',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
-                center: [123.5, 23.5],
+                center: [128.5, 23.5],
                 zoom: 7,
                 pitch: 0,
                 bearing: 0
