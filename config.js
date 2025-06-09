@@ -41,13 +41,13 @@ const config = {
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
-                            url: 'mapbox://owenoc.taiwan-cable-incidentss-cres3j'
+                            url: 'mapbox://owenoc.taiwan-cable-incidentx-d8tdes'
                         });
                         map.addLayer({
                             id: 'cable-incidents-layer',
                             type: 'circle',
                             source: 'cable-incidents',
-                            'source-layer': 'taiwan-cable-incidentss-cres3j',
+                            'source-layer': 'taiwan-cable-incidentx-d8tdes',
                             paint: {
                                 'circle-radius': 6,
                                 'circle-color': '#00ffff',
