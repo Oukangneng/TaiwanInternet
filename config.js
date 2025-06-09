@@ -50,7 +50,7 @@ const config = {
                             'source-layer': 'taiwan-cable-incidentx-d8tdes',
                             paint: {
                                 'circle-radius': 6,
-                                'circle-color': '#00ffff',
+                                'circle-color': '#ff0000',
                                 'circle-stroke-width': 1,
                                 'circle-stroke-color': '#000'
                             }
