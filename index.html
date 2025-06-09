@@ -236,7 +236,7 @@
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    // Add base cable layer
+    // When the map has loaded, set up layers and scrollama
     map.on('load', function() {
         map.addSource('cables', {
             type: 'geojson',
@@ -253,7 +253,7 @@
             }
         });
 
-        // Scrollama setup
+        // ✅ Scrollama setup with onChapterEnter/onChapterExit
         var scroller = scrollama();
         scroller.setup({
             step: '.step',
@@ -264,17 +264,19 @@
             var chapter = config.chapters.find(chap => chap.id === response.element.id);
             response.element.classList.add('active');
             map.flyTo(chapter.location);
+            if (chapter.onChapterEnter) chapter.onChapterEnter();
         })
         .onStepExit(response => {
+            var chapter = config.chapters.find(chap => chap.id === response.element.id);
             response.element.classList.remove('active');
+            if (chapter.onChapterExit) chapter.onChapterExit();
         });
     });
 
-    window.addEventListener('resize', scroller.resize);
+    window.addEventListener('resize', () => {
+        if (typeof scroller !== 'undefined') scroller.resize();
+    });
 </script>
-
-<!-- ✅ THIS LINE ADDED -->
-<script src="script.js"></script>
 
 </body>
 </html>
