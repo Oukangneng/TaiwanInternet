@@ -77,6 +77,47 @@ const config = {
                             map.getCanvas().style.cursor = '';
                         });
                     }
+
+                    // ✅ Add clickable GeoJSON overlay
+                    if (!map.getSource('clickable-cable-incidents')) {
+                        map.addSource('clickable-cable-incidents', {
+                            type: 'geojson',
+                            data: 'data/clickable_cable_incidents.geojson'
+                        });
+
+                        map.addLayer({
+                            id: 'clickable-cable-incidents-layer',
+                            type: 'circle',
+                            source: 'clickable-cable-incidents',
+                            paint: {
+                                'circle-radius': 10,
+                                'circle-color': 'transparent',
+                                'circle-stroke-width': 0
+                            }
+                        });
+
+                        map.on('click', 'clickable-cable-incidents-layer', function (e) {
+                            const props = e.features[0].properties;
+                            const popupHTML = `
+                                <strong>${props.cable}</strong><br>
+                                <em>${props.date}</em><br>
+                                ${props.distance}<br>
+                                ${props.notes ? `<small>${props.notes}</small>` : ''}
+                            `;
+                            new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+                        });
+
+                        map.on('mouseenter', 'clickable-cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = 'pointer';
+                        });
+
+                        map.on('mouseleave', 'clickable-cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = '';
+                        });
+                    }
                 }
             },
             onChapterExit: function () {
