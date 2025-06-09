@@ -1,13 +1,12 @@
 const config = {
     style: 'mapbox://styles/mapbox/dark-v11',
-    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtNnh0aHNsODB5ZjcyanE4NTYwMjRrZDcifQ.jIUeVxkI7mayEkFCKHcgKw',
+    accessToken: 'pk.eyJ1Ijoib3dlbm9jIiwiYSI6ImNtYm9mMjJpdzE2ZTYyaXE5Mmx2Yng5aHoifQ.ptuVPXZ7BVI4vsG1aY70Gw',
     showMarkers: false,
     theme: 'dark',
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
-    clickcGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/clickable_cable_incidents.geojson',
 
     chapters: [
         {
@@ -23,7 +22,6 @@ const config = {
             },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
-                    // Main cable lines
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
                             type: 'geojson',
@@ -40,11 +38,10 @@ const config = {
                         });
                     }
 
-                    // Vector incidents layer from Mapbox tileset
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
-                            url: 'mapbox://owenoc.cmbpan5ff001o01s64m2ofg6o' 
+                            url: 'mapbox://owenoc.740hanei'
                         });
                         map.addLayer({
                             id: 'cable-incidents-layer',
@@ -77,48 +74,6 @@ const config = {
                             map.getCanvas().style.cursor = 'pointer';
                         });
                         map.on('mouseleave', 'cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = '';
-                        });
-                    }
-
-                    // Local clickable GeoJSON overlay
-                    if (!map.getSource('clickable-cable-incidents')) {
-                        map.addSource('clickable-cable-incidents', {
-                            type: 'geojson',
-                            data: 'https://oukangneng.github.io/TaiwanInternet/data/clickable_cable_incidents.geojson'
-                        });
-
-                        map.addLayer({
-                            id: 'clickable-cable-incidents-layer',
-                            type: 'circle',
-                            source: 'clickable-cable-incidents',
-                            paint: {
-                                'circle-radius': 7,
-                                'circle-color': '#00ffff',
-                                'circle-stroke-width': 1.5,
-                                'circle-stroke-color': '#000'
-                            }
-                        });
-
-                        map.on('click', 'clickable-cable-incidents-layer', function (e) {
-                            const props = e.features[0].properties;
-                            const popupHTML = `
-                                <strong>${props.cable}</strong><br>
-                                <em>${props.date}</em><br>
-                                ${props.distance}<br>
-                                ${props.notes ? `<small>${props.notes}</small>` : ''}
-                            `;
-                            new mapboxgl.Popup()
-                                .setLngLat(e.lngLat)
-                                .setHTML(popupHTML)
-                                .addTo(map);
-                        });
-
-                        map.on('mouseenter', 'clickable-cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = 'pointer';
-                        });
-
-                        map.on('mouseleave', 'clickable-cable-incidents-layer', () => {
                             map.getCanvas().style.cursor = '';
                         });
                     }
