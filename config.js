@@ -41,7 +41,7 @@ const config = {
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
-                            url: 'mapbox://owenoc.taiwan-cable-incidentx-d8tdes'
+                            url: 'mapbox://owenoc.740hanei'
                         });
                         map.addLayer({
                             id: 'cable-incidents-layer',
