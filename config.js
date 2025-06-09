@@ -24,7 +24,7 @@ const config = {
       <svg id="bar-chart" width="600" height="300"></svg>
     </div>
   </div>
-`
+`,
             location: {
                 center: [120, 24],
                 zoom: 7,
