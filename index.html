@@ -218,81 +218,8 @@
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    map.on('load', () => {
-        map.addSource('cables', {
-            type: 'geojson',
-            data: './data/Global_Submarine_Cables.geojson'
-        });
+    // <-- Removed entire map.on('load', ...) block here -->
 
-        map.addLayer({
-            id: 'cables-layer',
-            type: 'line',
-            source: 'cables',
-            paint: {
-                'line-color': '#ff5733',
-                'line-width': 1
-            }
-        });
-
-        map.addSource('debug-incidents', {
-            type: 'vector',
-            url: 'mapbox://owenoc.740hanei'
-        });
-
-        map.addLayer({
-            id: 'debug-layer',
-            type: 'circle',
-            source: 'debug-incidents',
-            'source-layer': 'taiwan-cable-incidentx-d8tdes',
-            paint: {
-                'circle-radius': 10,
-                'circle-color': '#ff0000'
-            }
-        });
-
-        // ✅ CLICK-BASED POPUPS
-        map.on('click', 'debug-layer', (e) => {
-            const props = e.features[0].properties;
-            const coordinates = e.lngLat;
-
-            const content = `
-                <strong>Date:</strong> ${props.date || 'N/A'}<br>
-                <strong>Cable:</strong> ${props.cable || 'N/A'}<br>
-                <strong>Distance:</strong> ${props.distance || 'N/A'}<br>
-                <strong>Notes:</strong> ${props.notes || 'N/A'}
-            `;
-
-            new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(content)
-                .addTo(map);
-        });
-
-        map.on('mouseenter', 'debug-layer', () => {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-        map.on('mouseleave', 'debug-layer', () => {
-            map.getCanvas().style.cursor = '';
-        });
-
-        // Scrollama
-        const scroller = scrollama();
-        scroller.setup({
-            step: '.step',
-            offset: 0.5,
-            progress: true
-        })
-        .onStepEnter(response => {
-            const chapter = config.chapters.find(chap => chap.id === response.element.id);
-            response.element.classList.add('active');
-            map.flyTo(chapter.location);
-        })
-        .onStepExit(response => {
-            response.element.classList.remove('active');
-        });
-
-        window.addEventListener('resize', scroller.resize);
-    });
 </script>
 
 </body>
