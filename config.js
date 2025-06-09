@@ -44,7 +44,7 @@ const config = {
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
-                            url: 'mapbox://owenoc.740hanei'
+                            url: 'mapbox://owenoc.cmbpan5ff001o01s64m2ofg6o' 
                         });
                         map.addLayer({
                             id: 'cable-incidents-layer',
