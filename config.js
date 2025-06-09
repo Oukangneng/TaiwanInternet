@@ -7,6 +7,7 @@ const config = {
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
+    clickcGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/clickable_cable_incidents.geojson',
 
     chapters: [
         {
