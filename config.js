@@ -16,7 +16,7 @@ const config = {
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
                 center: [120, 24],
-                zoom: 7,
+                zoom: 6,
                 pitch: 0,
                 bearing: 0
             },
