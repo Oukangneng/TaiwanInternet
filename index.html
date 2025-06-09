@@ -236,8 +236,9 @@
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    // Add base cable layer
+    // Add base cable layer and your vector source/layer
     map.on('load', function() {
+        // Base cable GeoJSON layer
         map.addSource('cables', {
             type: 'geojson',
             data: './data/Global_Submarine_Cables.geojson'
@@ -250,6 +251,24 @@
             paint: {
                 'line-color': '#ff5733',
                 'line-width': 1
+            }
+        });
+
+        // Your vector tileset source for incidents
+        map.addSource('debug-incidents', {
+            type: 'vector',
+            url: 'mapbox://owenoc.740hanei'
+        });
+
+        // Circle layer for the incidents points
+        map.addLayer({
+            id: 'debug-layer',
+            type: 'circle',
+            source: 'debug-incidents',
+            'source-layer': 'taiwan-cable-incidentx-d8tdes',
+            paint: {
+                'circle-radius': 10,
+                'circle-color': '#ff0000'
             }
         });
 
@@ -268,9 +287,10 @@
         .onStepExit(response => {
             response.element.classList.remove('active');
         });
+
+        window.addEventListener('resize', scroller.resize);
     });
 
-    window.addEventListener('resize', scroller.resize);
 </script>
 
 <!-- ✅ THIS LINE ADDED -->
@@ -278,3 +298,4 @@
 
 </body>
 </html>
+
