@@ -84,7 +84,7 @@ const config = {
                         });
                     }
 
-                    // ✅ Only draw bar chart if not already drawn
+                    // ✅ Only draw bar chart once
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
