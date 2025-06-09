@@ -199,7 +199,7 @@
         container.appendChild(chapter);
         features.appendChild(container);
     });
-    
+
     story.appendChild(features);
 
     if (config.footer) {
@@ -236,9 +236,7 @@
         marker.setLngLat(config.chapters[0].location.center).addTo(map);
     }
 
-    // Add base cable layer and your vector source/layer
     map.on('load', function() {
-        // Base cable GeoJSON layer
         map.addSource('cables', {
             type: 'geojson',
             data: './data/Global_Submarine_Cables.geojson'
@@ -254,13 +252,11 @@
             }
         });
 
-        // Your vector tileset source for incidents
         map.addSource('debug-incidents', {
             type: 'vector',
             url: 'mapbox://owenoc.740hanei'
         });
 
-        // Circle layer for the incidents points
         map.addLayer({
             id: 'debug-layer',
             type: 'circle',
@@ -272,7 +268,35 @@
             }
         });
 
-        // Scrollama setup
+        // ✅ Hover popup for debug-layer
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+
+        map.on('mouseenter', 'debug-layer', (e) => {
+            map.getCanvas().style.cursor = 'pointer';
+            const feature = e.features[0];
+            const coordinates = feature.geometry.coordinates.slice();
+            const props = feature.properties;
+            const popupHTML = `
+                <strong>Date:</strong> ${props.date}<br>
+                <strong>Cable:</strong> ${props.cable}<br>
+                <strong>Distance:</strong> ${props.distance}<br>
+                <strong>Notes:</strong> ${props.notes}
+            `;
+            popup
+                .setLngLat(coordinates)
+                .setHTML(popupHTML)
+                .addTo(map);
+        });
+
+        map.on('mouseleave', 'debug-layer', () => {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+
+        // Scrollama
         var scroller = scrollama();
         scroller.setup({
             step: '.step',
@@ -290,12 +314,7 @@
 
         window.addEventListener('resize', scroller.resize);
     });
-
 </script>
-
-<!-- ✅ THIS LINE ADDED -->
-<script src="script.js"></script>
 
 </body>
 </html>
-
