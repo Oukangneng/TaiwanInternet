@@ -6,9 +6,7 @@ const config = {
     alignment: 'left',
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
-    // Absolute URLs to GeoJSON files hosted on GitHub Pages
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
-    incidentsGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
     chapters: [
         {
@@ -22,7 +20,7 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: function() {
+            onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
@@ -42,13 +40,14 @@ const config = {
 
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
-                            type: 'geojson',
-                            data: config.incidentsGeoJSON
+                            type: 'vector',
+                            url: 'mapbox://owenoc.taiwan-cable-incidentss-cres3j'
                         });
                         map.addLayer({
                             id: 'cable-incidents-layer',
                             type: 'circle',
                             source: 'cable-incidents',
+                            'source-layer': 'taiwan-cable-incidentss-cres3j',
                             paint: {
                                 'circle-radius': 6,
                                 'circle-color': '#00ffff',
@@ -80,7 +79,7 @@ const config = {
                     }
                 }
             },
-            onChapterExit: function() {
+            onChapterExit: function () {
                 if (typeof map !== 'undefined') {
                     if (map.getLayer('cables-layer')) {
                         map.removeLayer('cables-layer');
@@ -107,8 +106,8 @@ const config = {
                 pitch: 45,
                 bearing: 20
             },
-            onChapterEnter: function() {},
-            onChapterExit: function() {}
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
         },
         {
             id: 'incident-keelung',
@@ -126,8 +125,8 @@ const config = {
                 pitch: 30,
                 bearing: -10
             },
-            onChapterEnter: function() {},
-            onChapterExit: function() {}
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
         },
         {
             id: 'incident-south',
@@ -145,8 +144,8 @@ const config = {
                 pitch: 40,
                 bearing: 15
             },
-            onChapterEnter: function() {},
-            onChapterExit: function() {}
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
         },
         {
             id: 'conclusion',
@@ -158,9 +157,8 @@ const config = {
                 pitch: 0,
                 bearing: 0
             },
-            onChapterEnter: function() {},
-            onChapterExit: function() {}
+            onChapterEnter: function () {},
+            onChapterExit: function () {}
         }
     ]
 };
-
