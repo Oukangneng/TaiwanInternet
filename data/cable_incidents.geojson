@@ -7,15 +7,11 @@
         "date": "2025-03-14",
         "cable": "Taiwan - Penghu No. 3",
         "distance": "39.5 km from Magong",
-        "sources": [
-          "Taipei Fisheries Gov Report (Chinese)",
-          "MODA Report (English)"
-        ],
-        "notes": "From 23°20.24′N, 119°51.07′E (Beimen side) to 23°22.18′N, 119°46.91′E (Magong side)"
+        "notes": "From 23°20.24′N, 119°51.07′E to 23°22.18′N, 119°46.91′E"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [119.85117, 23.33733]
+        "coordinates": [119.8165, 23.3535]
       }
     },
     {
@@ -24,16 +20,50 @@
         "date": "2025-02-25",
         "cable": "Taiwan - Penghu No. 3",
         "distance": "14.7 km from Beimen, Tainan",
-        "sources": [
-          "Taipei Times",
-          "Taipei Fisheries Gov Report (Chinese)",
-          "MODA Report (English)"
-        ],
-        "notes": "Severed at 3:03am, suspected Togolese flagged Hongtai, 8 Chinese crew members. From 23°17.34′N, 120°1.62′E (Beimen side) to 23°17.46′N, 120°1.19′E (Magong side)"
+        "notes": "Severed at 3:03am, suspected Togolese flagged Hongtai"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [120.027, 23.289]
+        "coordinates": [120.0235, 23.29]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-02-06",
+        "cable": "Southeast Asia Japan Cable No. 2 (SJC2)",
+        "distance": "117 km from Tamsui",
+        "notes": "Section S5. Coordinates: 25°11.086′N, 122°14.612′E. Depth 212 m. Source: Taiwan Fisheries Gov Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.24353, 25.18477]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-02-05",
+        "cable": "Trans-Pacific High-Speed Submarine Cable (FASTER)",
+        "distance": "Off northeast Taiwan",
+        "notes": "Segment 6. Coordinates: 25°18.140′N, 122°03.705′E. Source: Taipei Fisheries Gov Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.06175, 25.30233]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-01-21",
+        "cable": "Taiwan - Matsu No. 2",
+        "distance": "Off Matsu",
+        "notes": "Natural deterioration. From 26°19′00.8″N, 120°45′01.0″E to 26°18′00.5″N, 120°47′00.8″E (WGS84 datum). Source: MODA and Taiwan News."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.7503, 26.3169]
       }
     }
   ]
