@@ -12,19 +12,19 @@ const config = {
         {
             id: 'intro',
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
-          description: `
-  <div style="max-width: 600px; margin: 40px auto; font-family: Arial, sans-serif; color: #ddd;">
-    <p style="text-align: left; font-size: 1.1em; line-height: 1.4;">
-      This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)
-    </p>
-    <div id="bar-chart-container" style="width: 100%; margin-top: 30px;">
-      <h3 style="text-align: center; margin-bottom: 15px; color: #eee;">
-        Increase in Subsea Cable Incidents Near Taiwan, 2019–2025
-      </h3>
-      <svg id="bar-chart" width="600" height="300"></svg>
-    </div>
-  </div>
-`,
+            description: `
+                <div style="max-width: 600px; margin: 40px auto; font-family: Arial, sans-serif; color: #ddd;">
+                    <p style="text-align: left; font-size: 1.1em; line-height: 1.4;">
+                        This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)
+                    </p>
+                    <div id="bar-chart-container" style="width: 100%; margin-top: 30px;">
+                        <h3 style="text-align: center; margin-bottom: 15px; color: #eee;">
+                            Increase in Subsea Cable Incidents Near Taiwan, 2019–2025
+                        </h3>
+                        <svg id="bar-chart" width="600" height="300"></svg>
+                    </div>
+                </div>
+            `,
             location: {
                 center: [120, 24],
                 zoom: 7,
@@ -108,6 +108,8 @@ const config = {
             }
         },
 
+        // ... your other chapters remain unchanged ...
+
         {
             id: 'incident-matsu',
             title: 'The Matsu Islands Incident (Part 1 of 2)',
@@ -183,4 +185,3 @@ const config = {
         }
     ]
 };
-
