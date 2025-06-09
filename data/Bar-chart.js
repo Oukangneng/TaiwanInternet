@@ -14,7 +14,7 @@ function drawBarChart() {
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
 
-  // Remove any existing content first if needed
+  // Clear any existing content in the SVG
   svg.selectAll("*").remove();
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
@@ -35,6 +35,7 @@ function drawBarChart() {
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).ticks(6));
 
+  // X-axis label
   g.append("text")
     .attr("x", width / 2)
     .attr("y", height + margin.bottom - 10)
@@ -43,6 +44,7 @@ function drawBarChart() {
     .style("font-size", "14px")
     .text("Number of Incidents");
 
+  // Bars
   g.selectAll(".bar")
     .data(data)
     .enter()
@@ -54,4 +56,5 @@ function drawBarChart() {
     .attr("width", d => x(d.count))
     .attr("fill", "#e63946");
 }
+
 
