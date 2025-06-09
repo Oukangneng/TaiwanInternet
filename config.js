@@ -22,6 +22,7 @@ const config = {
             },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
+                    // Main cable lines
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
                             type: 'geojson',
@@ -38,6 +39,7 @@ const config = {
                         });
                     }
 
+                    // Vector incidents layer from Mapbox tileset
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
@@ -78,11 +80,11 @@ const config = {
                         });
                     }
 
-                    // ✅ Add clickable GeoJSON overlay
+                    // Local clickable GeoJSON overlay
                     if (!map.getSource('clickable-cable-incidents')) {
                         map.addSource('clickable-cable-incidents', {
                             type: 'geojson',
-                            data: 'data/clickable_cable_incidents.geojson'
+                            data: 'https://oukangneng.github.io/TaiwanInternet/data/clickable_cable_incidents.geojson'
                         });
 
                         map.addLayer({
@@ -90,9 +92,10 @@ const config = {
                             type: 'circle',
                             source: 'clickable-cable-incidents',
                             paint: {
-                                'circle-radius': 10,
-                                'circle-color': 'transparent',
-                                'circle-stroke-width': 0
+                                'circle-radius': 7,
+                                'circle-color': '#00ffff',
+                                'circle-stroke-width': 1.5,
+                                'circle-stroke-color': '#000'
                             }
                         });
 
