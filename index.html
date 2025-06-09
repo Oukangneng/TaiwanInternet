@@ -219,69 +219,72 @@
   }
 
   map.on('load', function() {
-    map.addSource('cables', {
-      type: 'geojson',
-      data: './data/Global_Submarine_Cables.geojson'
-    });
+    // Add submarine cables GeoJSON source and layer (if not already added by chapters)
+    if (!map.getSource('cables')) {
+      map.addSource('cables', {
+        type: 'geojson',
+        data: config.cablesGeoJSON
+      });
+      map.addLayer({
+        id: 'cables-layer',
+        type: 'line',
+        source: 'cables',
+        paint: {
+          'line-color': '#ff5733',
+          'line-width': 2
+        }
+      });
+    }
 
-    map.addLayer({
-      id: 'cables-layer',
-      type: 'line',
-      source: 'cables',
-      paint: {
-        'line-color': '#ff5733',
-        'line-width': 1
-      }
-    });
+    // Add cable incidents vector source and circle layer
+    if (!map.getSource('cable-incidents')) {
+      map.addSource('cable-incidents', {
+        type: 'vector',
+        url: 'mapbox://owenoc.740hanei'
+      });
+      map.addLayer({
+        id: 'cable-incidents-layer',
+        type: 'circle',
+        source: 'cable-incidents',
+        'source-layer': 'taiwan-cable-incidentx-d8tdes',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#ff0000',
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#000'
+        }
+      });
 
-    map.addSource('debug-incidents', {
-      type: 'vector',
-      url: 'mapbox://owenoc.740hanei'
-    });
+      // Click popup for incidents
+      map.on('click', 'cable-incidents-layer', function (e) {
+        const props = e.features[0].properties;
+        const popupHTML = `
+          <strong>${props.cable}</strong><br>
+          <em>${props.date}</em><br>
+          ${props.distance}<br>
+          ${props.notes ? `<small>${props.notes}</small>` : ''}
+          <br>
+          <strong>Sources:</strong><br>
+          ${(props.sources || '')
+            .split(',')
+            .map(s => `• ${s.trim()}`)
+            .join('<br>')}
+        `;
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupHTML)
+          .addTo(map);
+      });
 
-    map.addLayer({
-      id: 'debug-layer',
-      type: 'circle',
-      source: 'debug-incidents',
-      'source-layer': 'taiwan-cable-incidentx-d8tdes',
-      paint: {
-        'circle-radius': 10,
-        'circle-color': '#ff0000'
-      }
-    });
+      map.on('mouseenter', 'cable-incidents-layer', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'cable-incidents-layer', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    }
 
-    // ✅ CLICK POPUP INTERACTIVITY ADDED HERE:
-    map.on('click', 'debug-layer', function (e) {
-      const feature = e.features[0];
-      const props = feature.properties;
-
-      const popupHTML = `
-        <strong>Date:</strong> ${props.date || 'Unknown'}<br>
-        <strong>Cable:</strong> ${props.cable || 'N/A'}<br>
-        <strong>Distance:</strong> ${props.distance || 'N/A'}<br>
-        <strong>Notes:</strong> ${props.notes || 'None'}<br>
-        <strong>Sources:</strong><br>
-        ${(props.sources || '')
-          .split(',')
-          .map(s => `• ${s.trim()}`)
-          .join('<br>')}
-      `;
-
-      new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(popupHTML)
-        .addTo(map);
-    });
-
-    map.on('mouseenter', 'debug-layer', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
-    map.on('mouseleave', 'debug-layer', () => {
-      map.getCanvas().style.cursor = '';
-    });
-
-    // Scrollama
+    // Scrollama setup
     var scroller = scrollama();
     scroller.setup({
       step: '.step',
@@ -292,16 +295,20 @@
       var chapter = config.chapters.find(chap => chap.id === response.element.id);
       response.element.classList.add('active');
       map.flyTo(chapter.location);
+
+      if (chapter.onChapterEnter) chapter.onChapterEnter();
     })
     .onStepExit(response => {
       response.element.classList.remove('active');
+      var chapter = config.chapters.find(chap => chap.id === response.element.id);
+      if (chapter.onChapterExit) chapter.onChapterExit();
     });
 
     window.addEventListener('resize', scroller.resize);
   });
 </script>
 
-<!-- ✅ LOAD YOUR SCRIPT -->
+<!-- Load your additional script if needed -->
 <script src="script.js"></script>
 
 </body>
