@@ -87,6 +87,14 @@
             border-radius: 8px;
             margin: 15px 0;
         }
+        #bar-chart-container {
+            background: #111;
+            padding: 4vh 5vw;
+            text-align: center;
+        }
+        #bar-chart-container h2 {
+            margin-bottom: 20px;
+        }
         @media (max-width: 750px) {
             #features {
                 width: 90vw;
@@ -99,6 +107,12 @@
 
     <div id="map"></div>
     <div id="story"></div>
+
+    <!-- Bar Graph Section -->
+    <div id="bar-chart-container">
+        <h2>Number of Cable Incidents Per Year</h2>
+        <svg id="bar-chart" width="100%" height="300"></svg>
+    </div>
 
     <script src="./config.js"></script>
 
@@ -251,18 +265,15 @@
                 }
             });
 
-            // ✅ CLICK-BASED POPUPS
             map.on('click', 'debug-layer', (e) => {
                 const props = e.features[0].properties;
                 const coordinates = e.lngLat;
-
                 const content = `
                     <strong>Date:</strong> ${props.date || 'N/A'}<br>
                     <strong>Cable:</strong> ${props.cable || 'N/A'}<br>
                     <strong>Distance:</strong> ${props.distance || 'N/A'}<br>
                     <strong>Notes:</strong> ${props.notes || 'N/A'}
                 `;
-
                 new mapboxgl.Popup()
                     .setLngLat(coordinates)
                     .setHTML(content)
@@ -276,7 +287,6 @@
                 map.getCanvas().style.cursor = '';
             });
 
-            // Scrollama setup
             const scroller = scrollama();
             scroller.setup({
                 step: '.step',
@@ -296,6 +306,9 @@
         });
     </script>
 
+    <!-- D3.js and Bar Chart Script -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./data/bar-chart.js"></script>
+
 </body>
 </html>
-
