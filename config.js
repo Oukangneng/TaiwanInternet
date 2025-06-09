@@ -14,7 +14,8 @@ const config = {
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             description: `
                 <p>This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)</p>
-                <div id="bar-chart-container" style="margin-top: 20px;">
+                <div id="bar-chart-container" style="width: 100%; max-width: 600px; margin: 40px auto;">
+                    <h3 style="text-align: center;">Increase in Subsea Cable Incidents Near Taiwan, 2019–2025</h3>
                     <svg id="bar-chart" width="600" height="300"></svg>
                 </div>
             `,
@@ -83,8 +84,8 @@ const config = {
                         });
                     }
 
-                    // Only draw chart if not already drawn
-                    if (!document.querySelector("#bar-chart g")) {
+                    // ✅ Only draw bar chart if not already drawn
+                    if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
                 }
@@ -176,3 +177,4 @@ const config = {
         }
     ]
 };
+
