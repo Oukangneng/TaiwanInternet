@@ -13,11 +13,11 @@ const config = {
             id: 'intro',
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             description: `
-  <p>This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)</p>
-  <div id="bar-chart-container" style="margin-top: 20px;">
-    <svg id="bar-chart" width="600" height="300"></svg>
-  </div>
-`,
+                <p>This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)</p>
+                <div id="bar-chart-container" style="margin-top: 20px;">
+                    <svg id="bar-chart" width="600" height="300"></svg>
+                </div>
+            `,
             location: {
                 center: [120, 24],
                 zoom: 7,
@@ -77,9 +77,15 @@ const config = {
                         map.on('mouseenter', 'cable-incidents-layer', () => {
                             map.getCanvas().style.cursor = 'pointer';
                         });
+
                         map.on('mouseleave', 'cable-incidents-layer', () => {
                             map.getCanvas().style.cursor = '';
                         });
+                    }
+
+                    // Only draw chart if not already drawn
+                    if (!document.querySelector("#bar-chart g")) {
+                        drawBarChart();
                     }
                 }
             },
@@ -94,6 +100,7 @@ const config = {
                 }
             }
         },
+
         {
             id: 'incident-matsu',
             title: 'The Matsu Islands Incident (Part 1 of 2)',
@@ -113,6 +120,7 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
+
         {
             id: 'incident-keelung',
             title: 'APCN-2 Cable Disruption near Keelung',
@@ -132,6 +140,7 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
+
         {
             id: 'incident-south',
             title: 'Disruption South of Taiwan',
@@ -151,6 +160,7 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
+
         {
             id: 'conclusion',
             title: 'Conclusion',
