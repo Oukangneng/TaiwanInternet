@@ -37,6 +37,46 @@ const config = {
                             }
                         });
                     }
+
+                    if (!map.getSource('cable-incidents')) {
+                        map.addSource('cable-incidents', {
+                            type: 'vector',
+                            url: 'mapbox://owenoc.740hanei'
+                        });
+                        map.addLayer({
+                            id: 'cable-incidents-layer',
+                            type: 'circle',
+                            source: 'cable-incidents',
+                            'source-layer': 'taiwan-cable-incidentx-d8tdes',
+                            paint: {
+                                'circle-radius': 6,
+                                'circle-color': '#00ffff',
+                                'circle-stroke-width': 1,
+                                'circle-stroke-color': '#000'
+                            }
+                        });
+
+                        map.on('click', 'cable-incidents-layer', function (e) {
+                            const props = e.features[0].properties;
+                            const popupHTML = `
+                                <strong>${props.cable}</strong><br>
+                                <em>${props.date}</em><br>
+                                ${props.distance}<br>
+                                ${props.notes ? `<small>${props.notes}</small>` : ''}
+                            `;
+                            new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+                        });
+
+                        map.on('mouseenter', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = 'pointer';
+                        });
+                        map.on('mouseleave', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = '';
+                        });
+                    }
                 }
             },
             onChapterExit: function () {
