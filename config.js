@@ -12,7 +12,7 @@ const config = {
     chapters: [
         {
             id: 'intro',
-            title: 'Monitoring Taiwan's Subsea Internet Cable Incidents',
+            title: 'Monitoring Taiwans Subsea Internet Cable Incidents',
             image: './data/canvabargraph.png',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
