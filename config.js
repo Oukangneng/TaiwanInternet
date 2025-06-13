@@ -10,9 +10,9 @@ const config = {
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
     chapters: [
-        {
+           {
             id: 'intro',
-            title: 'Monitoring Taiwans Subsea Internet Cable Incidents',
+            title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             image: './data/canvabargraph.png',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
@@ -50,37 +50,34 @@ const config = {
                             source: 'cable-incidents',
                             'source-layer': 'taiwan-cable-incidentx-d8tdes',
                             paint: {
-                                'circle-radius': 8,
+                                'circle-radius': 6,
                                 'circle-color': '#ff0000',
-                                'circle-stroke-width': 2,
-                                'circle-stroke-color': '#ffffff'
+                                'circle-stroke-width': 1,
+                                'circle-stroke-color': '#000'
                             }
                         });
 
-                        // Add a small delay to ensure layer is loaded
-                        setTimeout(() => {
-                            map.on('click', 'cable-incidents-layer', function (e) {
-                                const props = e.features[0].properties;
-                                const popupHTML = `
-                                    <strong>${props.cable}</strong><br>
-                                    <em>${props.date}</em><br>
-                                    ${props.distance}<br>
-                                    ${props.notes ? `<small>${props.notes}</small>` : ''}
-                                `;
-                                new mapboxgl.Popup()
-                                    .setLngLat(e.lngLat)
-                                    .setHTML(popupHTML)
-                                    .addTo(map);
-                            });
+                        map.on('click', 'cable-incidents-layer', function (e) {
+                            const props = e.features[0].properties;
+                            const popupHTML = `
+                                <strong>${props.cable}</strong><br>
+                                <em>${props.date}</em><br>
+                                ${props.distance}<br>
+                                ${props.notes ? `<small>${props.notes}</small>` : ''}
+                            `;
+                            new mapboxgl.Popup()
+                                .setLngLat(e.lngLat)
+                                .setHTML(popupHTML)
+                                .addTo(map);
+                        });
 
-                            map.on('mouseenter', 'cable-incidents-layer', () => {
-                                map.getCanvas().style.cursor = 'pointer';
-                            });
+                        map.on('mouseenter', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = 'pointer';
+                        });
 
-                            map.on('mouseleave', 'cable-incidents-layer', () => {
-                                map.getCanvas().style.cursor = '';
-                            });
-                        }, 1000);
+                        map.on('mouseleave', 'cable-incidents-layer', () => {
+                            map.getCanvas().style.cursor = '';
+                        });
                     }
 
                     // ✅ Only draw bar chart once
@@ -100,6 +97,8 @@ const config = {
                 }
             }
         },
+
+        // ... your other chapters remain unchanged ...
 
         {
             id: 'incident-matsu',
@@ -129,7 +128,7 @@ const config = {
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
                     Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).
                 </div>
-                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan's connection to global internet infrastructure.</p>
+                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
             `,
             location: {
                 center: [122.3, 25.1],
