@@ -148,7 +148,7 @@ const config = {
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
                     Photo showing the location of the cable disruption south of Taiwan (Late 2024).
                 </div>
-                <p>In late 2024, a major cable disruption occurred south of Taiwan, cutting off connectivity to parts of Southeast Asia. Officials suspected intentional sabotage.</p>
+                <p>In late 2024, a major cable disrupti.</p>
             `,
             location: {
                 center: [121.0, 21.8],
@@ -163,7 +163,7 @@ const config = {
         {
             id: 'conclusion',
             title: 'Conclusion',
-            description: 'In conclusion, Taiwan\'s undersea cables are vital for global communication and must be secured.',
+            description: 'In conclusion, .....',
             location: {
                 center: [121.5, 23.5],
                 zoom: 6,
