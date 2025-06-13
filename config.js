@@ -10,9 +10,9 @@ const config = {
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
     chapters: [
-           {
+        {
             id: 'intro',
-            title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
+            title: 'Monitoring Taiwan's Subsea Internet Cable Incidents',
             image: './data/canvabargraph.png',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
             location: {
@@ -23,6 +23,7 @@ const config = {
             },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
+                    // Add cables layer
                     if (!map.getSource('cables')) {
                         map.addSource('cables', {
                             type: 'geojson',
@@ -39,48 +40,115 @@ const config = {
                         });
                     }
 
+                    // Add cable incidents layer
                     if (!map.getSource('cable-incidents')) {
                         map.addSource('cable-incidents', {
                             type: 'vector',
                             url: 'mapbox://owenoc.740hanei'
                         });
+                        
+                        // Make sure the layer is added and wait for it to load
                         map.addLayer({
                             id: 'cable-incidents-layer',
                             type: 'circle',
                             source: 'cable-incidents',
                             'source-layer': 'taiwan-cable-incidentx-d8tdes',
                             paint: {
-                                'circle-radius': 6,
+                                'circle-radius': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    5, 4,    // At zoom 5, radius = 4
+                                    10, 8,   // At zoom 10, radius = 8
+                                    15, 12   // At zoom 15, radius = 12
+                                ],
                                 'circle-color': '#ff0000',
-                                'circle-stroke-width': 1,
-                                'circle-stroke-color': '#000'
+                                'circle-stroke-width': 2,
+                                'circle-stroke-color': '#ffffff',
+                                'circle-opacity': 0.8,
+                                'circle-stroke-opacity': 1
                             }
                         });
 
-                        map.on('click', 'cable-incidents-layer', function (e) {
-                            const props = e.features[0].properties;
-                            const popupHTML = `
-                                <strong>${props.cable}</strong><br>
-                                <em>${props.date}</em><br>
-                                ${props.distance}<br>
-                                ${props.notes ? `<small>${props.notes}</small>` : ''}
-                            `;
-                            new mapboxgl.Popup()
-                                .setLngLat(e.lngLat)
-                                .setHTML(popupHTML)
-                                .addTo(map);
-                        });
+                        // Wait for the source data to load before adding event listeners
+                        map.on('sourcedata', function(e) {
+                            if (e.sourceId === 'cable-incidents' && e.isSourceLoaded) {
+                                // Remove any existing event listeners to prevent duplicates
+                                map.off('click', 'cable-incidents-layer');
+                                map.off('mouseenter', 'cable-incidents-layer');
+                                map.off('mouseleave', 'cable-incidents-layer');
 
-                        map.on('mouseenter', 'cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = 'pointer';
-                        });
+                                // Add click event listener
+                                map.on('click', 'cable-incidents-layer', function (e) {
+                                    // Prevent the default map click behavior
+                                    e.preventDefault();
+                                    
+                                    const props = e.features[0].properties;
+                                    console.log('Circle clicked! Properties:', props); // Debug log
+                                    
+                                    const popupHTML = `
+                                        <div style="max-width: 250px; padding: 10px;">
+                                            <h3 style="margin: 0 0 10px 0; color: #ff0000;">${props.cable || 'Cable Incident'}</h3>
+                                            <p style="margin: 5px 0;"><strong>Date:</strong> ${props.date || 'Unknown'}</p>
+                                            <p style="margin: 5px 0;"><strong>Distance:</strong> ${props.distance || 'N/A'}</p>
+                                            ${props.notes ? `<p style="margin: 5px 0; font-style: italic;"><strong>Notes:</strong> ${props.notes}</p>` : ''}
+                                            ${props.cause ? `<p style="margin: 5px 0;"><strong>Cause:</strong> ${props.cause}</p>` : ''}
+                                        </div>
+                                    `;
+                                    
+                                    // Remove any existing popups
+                                    const existingPopups = document.getElementsByClassName('mapboxgl-popup');
+                                    if (existingPopups.length > 0) {
+                                        for (let popup of existingPopups) {
+                                            popup.remove();
+                                        }
+                                    }
+                                    
+                                    new mapboxgl.Popup({
+                                        closeButton: true,
+                                        closeOnClick: true,
+                                        maxWidth: '300px'
+                                    })
+                                        .setLngLat(e.lngLat)
+                                        .setHTML(popupHTML)
+                                        .addTo(map);
+                                });
 
-                        map.on('mouseleave', 'cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = '';
+                                // Add hover effects
+                                map.on('mouseenter', 'cable-incidents-layer', function(e) {
+                                    map.getCanvas().style.cursor = 'pointer';
+                                    
+                                    // Optional: Add hover effect by changing the circle properties
+                                    map.setPaintProperty('cable-incidents-layer', 'circle-radius', [
+                                        'interpolate',
+                                        ['linear'],
+                                        ['zoom'],
+                                        5, 6,    // Slightly larger on hover
+                                        10, 12,
+                                        15, 16
+                                    ]);
+                                });
+
+                                map.on('mouseleave', 'cable-incidents-layer', function() {
+                                    map.getCanvas().style.cursor = '';
+                                    
+                                    // Reset circle size
+                                    map.setPaintProperty('cable-incidents-layer', 'circle-radius', [
+                                        'interpolate',
+                                        ['linear'],
+                                        ['zoom'],
+                                        5, 4,
+                                        10, 8,
+                                        15, 12
+                                    ]);
+                                });
+
+                                console.log('Event listeners added to cable-incidents-layer'); // Debug log
+                            }
                         });
                     }
 
-                    // ✅ Only draw bar chart once
+                    // Draw bar chart only once
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
@@ -97,8 +165,6 @@ const config = {
                 }
             }
         },
-
-        // ... your other chapters remain unchanged ...
 
         {
             id: 'incident-matsu',
@@ -128,7 +194,7 @@ const config = {
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
                     Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).
                 </div>
-                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
+                <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan's connection to global internet infrastructure.</p>
             `,
             location: {
                 center: [122.3, 25.1],
