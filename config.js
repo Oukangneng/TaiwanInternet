@@ -172,7 +172,7 @@ const config = {
                 if (!map.getSource('planned-cable')) {
                     map.addSource('planned-cable', {
                         type: 'geojson',
-                        data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cablegeojson'
+                        data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cable.geojson'
                     });
 
                     map.addLayer({
