@@ -9,6 +9,7 @@ const config = {
 
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
+    plannedCableGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cable.geojson',
 
     initializeMapLayers: function (map) {
         // Add cables GeoJSON source and line layer
@@ -69,6 +70,48 @@ const config = {
                 map.getCanvas().style.cursor = '';
             });
         }
+
+        // Add planned cable source and line layer once at initialization
+        if (!map.getSource('planned-cable')) {
+            map.addSource('planned-cable', {
+                type: 'geojson',
+                data: config.plannedCableGeoJSON
+            });
+
+            map.addLayer({
+                id: 'planned-cable-layer',
+                type: 'line',
+                source: 'planned-cable',
+                layout: {
+                    // Initially hide the layer
+                    visibility: 'none'
+                },
+                paint: {
+                    'line-color': '#00FFFF',
+                    'line-width': 4,
+                    'line-dasharray': [4, 2]
+                }
+            });
+        }
+
+        // Debug: log layers and sources on load
+        map.on('load', () => {
+            console.log('Map layers:', map.getStyle().layers.map(l => l.id));
+            console.log('Map sources:', Object.keys(map.getStyle().sources));
+        });
+    },
+
+    // Helper functions for toggling planned cable visibility
+    showPlannedCable: function(map) {
+        if (map.getLayer('planned-cable-layer')) {
+            map.setLayoutProperty('planned-cable-layer', 'visibility', 'visible');
+        }
+    },
+
+    hidePlannedCable: function(map) {
+        if (map.getLayer('planned-cable-layer')) {
+            map.setLayoutProperty('planned-cable-layer', 'visibility', 'none');
+        }
     },
 
     chapters: [
@@ -88,6 +131,8 @@ const config = {
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
+                    // Hide planned cable by default
+                    config.hidePlannedCable(map);
                 }
             },
             onChapterExit: function () {
@@ -98,6 +143,8 @@ const config = {
                     if (map.getSource('cables')) {
                         map.removeSource('cables');
                     }
+                    // Hide planned cable on exit
+                    config.hidePlannedCable(map);
                 }
             }
         },
@@ -117,8 +164,16 @@ const config = {
                 pitch: 45,
                 bearing: 20
             },
-            onChapterEnter: function () {},
-            onChapterExit: function () {}
+            onChapterEnter: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            },
+            onChapterExit: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            }
         },
         {
             id: 'incident-keelung',
@@ -136,8 +191,16 @@ const config = {
                 pitch: 30,
                 bearing: -10
             },
-            onChapterEnter: function () {},
-            onChapterExit: function () {}
+            onChapterEnter: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            },
+            onChapterExit: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            }
         },
         {
             id: 'incident-south',
@@ -155,8 +218,16 @@ const config = {
                 pitch: 40,
                 bearing: 15
             },
-            onChapterEnter: function () {},
-            onChapterExit: function () {}
+            onChapterEnter: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            },
+            onChapterExit: function () {
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
+                }
+            }
         },
         {
             id: 'conclusion',
@@ -169,31 +240,13 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function () {
-                if (!map.getSource('planned-cable')) {
-                    map.addSource('planned-cable', {
-                        type: 'geojson',
-                        data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cable.geojson'
-                    });
-
-                    map.addLayer({
-                        id: 'planned-cable-layer',
-                        type: 'line',
-                        source: 'planned-cable',
-                        layout: {},
-                        paint: {
-                            'line-color': '#00FFFF',
-                            'line-width': 3,
-                            'line-dasharray': [2, 2]
-                        }
-                    });
+                if (typeof map !== 'undefined') {
+                    config.showPlannedCable(map);
                 }
             },
             onChapterExit: function () {
-                if (map.getLayer('planned-cable-layer')) {
-                    map.removeLayer('planned-cable-layer');
-                }
-                if (map.getSource('planned-cable')) {
-                    map.removeSource('planned-cable');
+                if (typeof map !== 'undefined') {
+                    config.hidePlannedCable(map);
                 }
             }
         }
