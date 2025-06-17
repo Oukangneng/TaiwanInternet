@@ -10,7 +10,7 @@ const config = {
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
     chapters: [
-           {
+        {
             id: 'intro',
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             image: './data/canvabargraph.png',
@@ -44,11 +44,12 @@ const config = {
                             type: 'vector',
                             url: 'mapbox://owenoc.740hanei'
                         });
+
                         map.addLayer({
                             id: 'cable-incidents-layer',
                             type: 'circle',
                             source: 'cable-incidents',
-                            'source-layer': 'taiwan-cable-incidentx-d8tdes',
+                            'source-layer': 'taiwan-cable-incidentx-d8tdes', // ✅ your actual vector tile layer ID
                             paint: {
                                 'circle-radius': 6,
                                 'circle-color': '#ff0000',
@@ -80,7 +81,6 @@ const config = {
                         });
                     }
 
-                    // ✅ Only draw bar chart once
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
@@ -97,8 +97,6 @@ const config = {
                 }
             }
         },
-
-        // ... your other chapters remain unchanged ...
 
         {
             id: 'incident-matsu',
