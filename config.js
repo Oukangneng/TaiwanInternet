@@ -4,6 +4,7 @@ const config = {
     showMarkers: false,
     theme: 'dark',
     alignment: 'left',
+    interactive: true,
     footer: 'Tracking Taiwan Undersea Cable Incidents',
 
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
