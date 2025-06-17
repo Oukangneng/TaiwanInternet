@@ -27,29 +27,22 @@ const config = {
                 }
             });
         }
+map.addSource('debug-incidents', {
+    type: 'geojson',
+    data: './data/cable_incidents.geojson' // Make sure this path is correct
+});
 
-        // Add vector tile source for cable incidents once
-        if (!map.getSource('cable-incidents')) {
-            map.addSource('cable-incidents', {
-                type: 'vector',
-                url: 'mapbox://owenoc.740hanei'
-            });
-        }
-
-        // Add circle layer for cable incidents once
-        if (!map.getLayer('cable-incidents-layer')) {
-            map.addLayer({
-                id: 'cable-incidents-layer',
-                type: 'circle',
-                source: 'cable-incidents',
-                'source-layer': 'taiwan-cable-incidentx-d8tdes',
-                paint: {
-                    'circle-radius': 6,
-                    'circle-color': '#ff0000',
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#000'
-                }
-            });
+map.addLayer({
+    id: 'debug-layer',
+    type: 'circle',
+    source: 'debug-incidents',
+    paint: {
+        'circle-radius': 12,
+        'circle-color': '#ff0000',
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#000'
+    }
+});
         }
 
         // Add popup on click for incidents layer
