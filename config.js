@@ -159,43 +159,44 @@ const config = {
             onChapterExit: function () {}
         },
         {
-   {
-    id: 'conclusion',
-    title: 'Conclusion',
-    description: 'In conclusion, .....',
-    location: {
-        center: [121.5, 23.5],
-        zoom: 6,
-        pitch: 0,
-        bearing: 0
-    },
-    onChapterEnter: function () {
-        if (!map.getSource('planned-cable')) {
-            map.addSource('planned-cable', {
-                type: 'geojson',
-                data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cablegeojson'
-            });
+            id: 'conclusion',
+            title: 'Conclusion',
+            description: 'In conclusion, .....',
+            location: {
+                center: [121.5, 23.5],
+                zoom: 6,
+                pitch: 0,
+                bearing: 0
+            },
+            onChapterEnter: function () {
+                if (!map.getSource('planned-cable')) {
+                    map.addSource('planned-cable', {
+                        type: 'geojson',
+                        data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cablegeojson'
+                    });
 
-            map.addLayer({
-                id: 'planned-cable-layer',
-                type: 'line',
-                source: 'planned-cable',
-                layout: {},
-                paint: {
-                    'line-color': '#00FFFF',
-                    'line-width': 3,
-                    'line-dasharray': [2, 2]
+                    map.addLayer({
+                        id: 'planned-cable-layer',
+                        type: 'line',
+                        source: 'planned-cable',
+                        layout: {},
+                        paint: {
+                            'line-color': '#00FFFF',
+                            'line-width': 3,
+                            'line-dasharray': [2, 2]
+                        }
+                    });
                 }
-            });
+            },
+            onChapterExit: function () {
+                if (map.getLayer('planned-cable-layer')) {
+                    map.removeLayer('planned-cable-layer');
+                }
+                if (map.getSource('planned-cable')) {
+                    map.removeSource('planned-cable');
+                }
+            }
         }
-    },
-    onChapterExit: function () {
-        if (map.getLayer('planned-cable-layer')) {
-            map.removeLayer('planned-cable-layer');
-        }
-        if (map.getSource('planned-cable')) {
-            map.removeSource('planned-cable');
-        }
-    }
+    ]
 };
 
