@@ -9,9 +9,8 @@ const config = {
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
-    // Function to initialize your map sources, layers, and popup handlers on map load
     initializeMapLayers: function (map) {
-        // Add cables GeoJSON source and line layer once
+        // Add cables GeoJSON source and line layer
         if (!map.getSource('cables')) {
             map.addSource('cables', {
                 type: 'geojson',
@@ -27,46 +26,48 @@ const config = {
                 }
             });
         }
-map.addSource('debug-incidents', {
-    type: 'geojson',
-    data: './data/cable_incidents.geojson' // Make sure this path is correct
-});
 
-map.addLayer({
-    id: 'debug-layer',
-    type: 'circle',
-    source: 'debug-incidents',
-    paint: {
-        'circle-radius': 12,
-        'circle-color': '#ff0000',
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#000'
-    }
-});
+        // Add incidents GeoJSON source and layer
+        if (!map.getSource('debug-incidents')) {
+            map.addSource('debug-incidents', {
+                type: 'geojson',
+                data: config.redGeoJSON
+            });
+            map.addLayer({
+                id: 'debug-layer',
+                type: 'circle',
+                source: 'debug-incidents',
+                paint: {
+                    'circle-radius': 12,
+                    'circle-color': '#ff0000',
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000'
+                }
+            });
+
+            // Add popup interaction
+            map.on('click', 'debug-layer', function (e) {
+                const props = e.features[0].properties;
+                const popupHTML = `
+                    <strong>${props.cable}</strong><br>
+                    <em>${props.date}</em><br>
+                    ${props.distance}<br>
+                    ${props.notes ? `<small>${props.notes}</small>` : ''}
+                `;
+                new mapboxgl.Popup()
+                    .setLngLat(e.lngLat)
+                    .setHTML(popupHTML)
+                    .addTo(map);
+            });
+
+            // Change cursor on hover
+            map.on('mouseenter', 'debug-layer', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'debug-layer', () => {
+                map.getCanvas().style.cursor = '';
+            });
         }
-
-        // Add popup on click for incidents layer
-        map.on('click', 'cable-incidents-layer', function (e) {
-            const props = e.features[0].properties;
-            const popupHTML = `
-                <strong>${props.cable}</strong><br>
-                <em>${props.date}</em><br>
-                ${props.distance}<br>
-                ${props.notes ? `<small>${props.notes}</small>` : ''}
-            `;
-            new mapboxgl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(popupHTML)
-                .addTo(map);
-        });
-
-        // Change cursor on hover
-        map.on('mouseenter', 'cable-incidents-layer', () => {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-        map.on('mouseleave', 'cable-incidents-layer', () => {
-            map.getCanvas().style.cursor = '';
-        });
     },
 
     chapters: [
@@ -83,7 +84,6 @@ map.addLayer({
             },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
-                    // Only trigger any animations or chart drawing here, not adding layers/sources
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
@@ -91,14 +91,12 @@ map.addLayer({
             },
             onChapterExit: function () {
                 if (typeof map !== 'undefined') {
-                    // Remove cables-layer and source if you want to reset on exit
                     if (map.getLayer('cables-layer')) {
                         map.removeLayer('cables-layer');
                     }
                     if (map.getSource('cables')) {
                         map.removeSource('cables');
                     }
-                    // Do NOT remove incidents layer/source here — keep it persistent for interactivity
                 }
             }
         },
@@ -148,7 +146,7 @@ map.addLayer({
                 <div style="font-size: 0.85em; font-style: italic; color: #666; text-align: center; margin-top: 10px;">
                     Photo showing the location of the cable disruption south of Taiwan (Late 2024).
                 </div>
-                <p>In late 2024, a major cable disrupti.</p>
+                <p>In late 2024, a major cable disruption...</p>
             `,
             location: {
                 center: [121.0, 21.8],
