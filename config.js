@@ -9,6 +9,73 @@ const config = {
     cablesGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
     redGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
 
+    // Function to initialize your map sources, layers, and popup handlers on map load
+    initializeMapLayers: function (map) {
+        // Add cables GeoJSON source and line layer once
+        if (!map.getSource('cables')) {
+            map.addSource('cables', {
+                type: 'geojson',
+                data: config.cablesGeoJSON
+            });
+            map.addLayer({
+                id: 'cables-layer',
+                type: 'line',
+                source: 'cables',
+                paint: {
+                    'line-color': '#ff5733',
+                    'line-width': 2
+                }
+            });
+        }
+
+        // Add vector tile source for cable incidents once
+        if (!map.getSource('cable-incidents')) {
+            map.addSource('cable-incidents', {
+                type: 'vector',
+                url: 'mapbox://owenoc.740hanei'
+            });
+        }
+
+        // Add circle layer for cable incidents once
+        if (!map.getLayer('cable-incidents-layer')) {
+            map.addLayer({
+                id: 'cable-incidents-layer',
+                type: 'circle',
+                source: 'cable-incidents',
+                'source-layer': 'taiwan-cable-incidentx-d8tdes',
+                paint: {
+                    'circle-radius': 6,
+                    'circle-color': '#ff0000',
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#000'
+                }
+            });
+        }
+
+        // Add popup on click for incidents layer
+        map.on('click', 'cable-incidents-layer', function (e) {
+            const props = e.features[0].properties;
+            const popupHTML = `
+                <strong>${props.cable}</strong><br>
+                <em>${props.date}</em><br>
+                ${props.distance}<br>
+                ${props.notes ? `<small>${props.notes}</small>` : ''}
+            `;
+            new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(popupHTML)
+                .addTo(map);
+        });
+
+        // Change cursor on hover
+        map.on('mouseenter', 'cable-incidents-layer', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'cable-incidents-layer', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    },
+
     chapters: [
         {
             id: 'intro',
@@ -23,64 +90,7 @@ const config = {
             },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
-                    if (!map.getSource('cables')) {
-                        map.addSource('cables', {
-                            type: 'geojson',
-                            data: config.cablesGeoJSON
-                        });
-                        map.addLayer({
-                            id: 'cables-layer',
-                            type: 'line',
-                            source: 'cables',
-                            paint: {
-                                'line-color': '#ff5733',
-                                'line-width': 2
-                            }
-                        });
-                    }
-
-                    if (!map.getSource('cable-incidents')) {
-                        map.addSource('cable-incidents', {
-                            type: 'vector',
-                            url: 'mapbox://owenoc.740hanei'
-                        });
-
-                        map.addLayer({
-                            id: 'cable-incidents-layer',
-                            type: 'circle',
-                            source: 'cable-incidents',
-                            'source-layer': 'taiwan-cable-incidentx-d8tdes', // ✅ your actual vector tile layer ID
-                            paint: {
-                                'circle-radius': 6,
-                                'circle-color': '#ff0000',
-                                'circle-stroke-width': 1,
-                                'circle-stroke-color': '#000'
-                            }
-                        });
-
-                        map.on('click', 'cable-incidents-layer', function (e) {
-                            const props = e.features[0].properties;
-                            const popupHTML = `
-                                <strong>${props.cable}</strong><br>
-                                <em>${props.date}</em><br>
-                                ${props.distance}<br>
-                                ${props.notes ? `<small>${props.notes}</small>` : ''}
-                            `;
-                            new mapboxgl.Popup()
-                                .setLngLat(e.lngLat)
-                                .setHTML(popupHTML)
-                                .addTo(map);
-                        });
-
-                        map.on('mouseenter', 'cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = 'pointer';
-                        });
-
-                        map.on('mouseleave', 'cable-incidents-layer', () => {
-                            map.getCanvas().style.cursor = '';
-                        });
-                    }
-
+                    // Only trigger any animations or chart drawing here, not adding layers/sources
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
@@ -88,16 +98,17 @@ const config = {
             },
             onChapterExit: function () {
                 if (typeof map !== 'undefined') {
+                    // Remove cables-layer and source if you want to reset on exit
                     if (map.getLayer('cables-layer')) {
                         map.removeLayer('cables-layer');
                     }
                     if (map.getSource('cables')) {
                         map.removeSource('cables');
                     }
+                    // Do NOT remove incidents layer/source here — keep it persistent for interactivity
                 }
             }
         },
-
         {
             id: 'incident-matsu',
             title: 'The Matsu Islands Incident (Part 1 of 2)',
@@ -117,7 +128,6 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
-
         {
             id: 'incident-keelung',
             title: 'APCN-2 Cable Disruption near Keelung',
@@ -137,7 +147,6 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
-
         {
             id: 'incident-south',
             title: 'Disruption South of Taiwan',
@@ -157,7 +166,6 @@ const config = {
             onChapterEnter: function () {},
             onChapterExit: function () {}
         },
-
         {
             id: 'conclusion',
             title: 'Conclusion',
