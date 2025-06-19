@@ -47,7 +47,6 @@ const config = {
                 }
             });
 
-            // Add popup interaction
             map.on('click', 'debug-layer', function (e) {
                 const props = e.features[0].properties;
                 const popupHTML = `
@@ -62,7 +61,6 @@ const config = {
                     .addTo(map);
             });
 
-            // Change cursor on hover
             map.on('mouseenter', 'debug-layer', () => {
                 map.getCanvas().style.cursor = 'pointer';
             });
@@ -71,7 +69,7 @@ const config = {
             });
         }
 
-        // Add planned cable source and line layer once at initialization
+        // Add planned cable GeoJSON source and line layer
         if (!map.getSource('planned-cable')) {
             map.addSource('planned-cable', {
                 type: 'geojson',
@@ -83,7 +81,6 @@ const config = {
                 type: 'line',
                 source: 'planned-cable',
                 layout: {
-                    // Initially hide the layer
                     visibility: 'none'
                 },
                 paint: {
@@ -94,21 +91,19 @@ const config = {
             });
         }
 
-        // Debug: log layers and sources on load
-        map.on('load', () => {
-            console.log('Map layers:', map.getStyle().layers.map(l => l.id));
-            console.log('Map sources:', Object.keys(map.getStyle().sources));
-        });
+        // Debug output
+        console.log('Map layers:', map.getStyle().layers.map(l => l.id));
+        console.log('Map sources:', Object.keys(map.getStyle().sources));
     },
 
-    // Helper functions for toggling planned cable visibility
-    showPlannedCable: function(map) {
+    // Planned cable visibility toggle
+    showPlannedCable: function (map) {
         if (map.getLayer('planned-cable-layer')) {
             map.setLayoutProperty('planned-cable-layer', 'visibility', 'visible');
         }
     },
 
-    hidePlannedCable: function(map) {
+    hidePlannedCable: function (map) {
         if (map.getLayer('planned-cable-layer')) {
             map.setLayoutProperty('planned-cable-layer', 'visibility', 'none');
         }
@@ -131,7 +126,6 @@ const config = {
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
                         drawBarChart();
                     }
-                    // Hide planned cable by default
                     config.hidePlannedCable(map);
                 }
             },
@@ -143,7 +137,6 @@ const config = {
                     if (map.getSource('cables')) {
                         map.removeSource('cables');
                     }
-                    // Hide planned cable on exit
                     config.hidePlannedCable(map);
                 }
             }
@@ -165,14 +158,10 @@ const config = {
                 bearing: 20
             },
             onChapterEnter: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             },
             onChapterExit: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             }
         },
         {
@@ -192,14 +181,10 @@ const config = {
                 bearing: -10
             },
             onChapterEnter: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             },
             onChapterExit: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             }
         },
         {
@@ -219,14 +204,10 @@ const config = {
                 bearing: 15
             },
             onChapterEnter: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             },
             onChapterExit: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             }
         },
         {
@@ -240,16 +221,16 @@ const config = {
                 bearing: 0
             },
             onChapterEnter: function () {
-                if (typeof map !== 'undefined') {
-                    config.showPlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.showPlannedCable(map);
             },
             onChapterExit: function () {
-                if (typeof map !== 'undefined') {
-                    config.hidePlannedCable(map);
-                }
+                if (typeof map !== 'undefined') config.hidePlannedCable(map);
             }
         }
     ]
 };
 
+// 🔁 Make sure you run this when initializing your Mapbox map
+map.on('load', function () {
+    config.initializeMapLayers(map);
+});
