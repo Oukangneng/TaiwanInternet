@@ -215,8 +215,8 @@ const config = {
             title: 'Conclusion',
             description: 'In conclusion, .....',
             location: {
-                center: [121.5, 23.5],
-                zoom: 6,
+                center: [120, 26],
+                zoom: 7,
                 pitch: 0,
                 bearing: 0
             },
