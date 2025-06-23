@@ -147,7 +147,7 @@ const config = {
             description: 'In conclusion, .....',
             location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
             onChapterEnter: map => config.showPlannedCable(map),
-            onChapterExit: map => config.hidePlannedCable(map)
+            onChapterExit: map => config.showPlannedCable(map)
         }
     ]
 };
