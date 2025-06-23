@@ -170,6 +170,23 @@ const config = {
             onChapterEnter: map => config.hidePlannedCable(map),
             onChapterExit: map => config.hidePlannedCable(map)
         },
+        map.addSource('planned-cable', {
+  type: 'geojson',
+  data: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cable.geojson'
+});
+
+map.addLayer({
+  id: 'planned-cable-layer',
+  type: 'line',
+  source: 'planned-cable',
+  layout: { visibility: 'visible' },
+  paint: {
+    'line-color': '#00FFFF',
+    'line-width': 6,
+    'line-dasharray': [4, 2],
+    'line-opacity': 1
+  }
+});
         {
             id: 'conclusion',
             title: 'Conclusion',
