@@ -69,7 +69,7 @@ const config = {
             });
         }
 
-        // Add planned cable GeoJSON source and line layer (initially hidden)
+        // Add planned cable GeoJSON source and line layer (always visible, but transparent)
         if (!map.getSource('planned-cable')) {
             map.addSource('planned-cable', {
                 type: 'geojson',
@@ -81,17 +81,17 @@ const config = {
                 type: 'line',
                 source: 'planned-cable',
                 layout: {
-                    visibility: 'none'  // start hidden
+                    visibility: 'visible'  // always visible
                 },
                 paint: {
                     'line-color': '#00FFFF',
                     'line-width': 6,
                     'line-dasharray': [4, 2],
-                    'line-opacity': 0.9
+                    'line-opacity': 0 // start fully transparent (hidden)
                 }
             });
 
-            // Move layer to top so it's visible above others when shown
+            // Bring layer to top
             map.moveLayer('planned-cable-layer');
         }
 
@@ -99,16 +99,20 @@ const config = {
         console.log('Map sources:', Object.keys(map.getStyle().sources));
     },
 
-    // Toggle planned cable layer visibility
+    // Toggle planned cable layer visibility by adjusting opacity instead of visibility
     showPlannedCable: function (map) {
-        if (map.getLayer('planned-cable-layer')) {
-            map.setLayoutProperty('planned-cable-layer', 'visibility', 'visible');
+        if (!map.getLayer('planned-cable-layer')) {
+            console.log("Planned cable layer missing; initializing layers.");
+            config.initializeMapLayers(map);
         }
+        console.log("Showing planned-cable-layer");
+        map.setPaintProperty('planned-cable-layer', 'line-opacity', 0.9);
     },
 
     hidePlannedCable: function (map) {
         if (map.getLayer('planned-cable-layer')) {
-            map.setLayoutProperty('planned-cable-layer', 'visibility', 'none');
+            console.log("Hiding planned-cable-layer");
+            map.setPaintProperty('planned-cable-layer', 'line-opacity', 0);
         }
     },
 
