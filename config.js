@@ -12,12 +12,9 @@ const config = {
     plannedCableGeoJSON: 'https://oukangneng.github.io/TaiwanInternet/data/Taiwan_Matsu_No_4_Cable.geojson',
 
     initializeMapLayers: function (map) {
-        // Add cables GeoJSON source and line layer
+        // Cables layer
         if (!map.getSource('cables')) {
-            map.addSource('cables', {
-                type: 'geojson',
-                data: config.cablesGeoJSON
-            });
+            map.addSource('cables', { type: 'geojson', data: config.cablesGeoJSON });
             map.addLayer({
                 id: 'cables-layer',
                 type: 'line',
@@ -29,12 +26,9 @@ const config = {
             });
         }
 
-        // Add incidents GeoJSON source and layer
+        // Incident markers
         if (!map.getSource('debug-incidents')) {
-            map.addSource('debug-incidents', {
-                type: 'geojson',
-                data: config.redGeoJSON
-            });
+            map.addSource('debug-incidents', { type: 'geojson', data: config.redGeoJSON });
             map.addLayer({
                 id: 'debug-layer',
                 type: 'circle',
@@ -61,37 +55,25 @@ const config = {
                     .addTo(map);
             });
 
-            map.on('mouseenter', 'debug-layer', () => {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-            map.on('mouseleave', 'debug-layer', () => {
-                map.getCanvas().style.cursor = '';
-            });
+            map.on('mouseenter', 'debug-layer', () => map.getCanvas().style.cursor = 'pointer');
+            map.on('mouseleave', 'debug-layer', () => map.getCanvas().style.cursor = '');
         }
 
-        // Add planned cable GeoJSON source and line layer (always visible, but transparent)
+        // Planned cable layer
         if (!map.getSource('planned-cable')) {
-            map.addSource('planned-cable', {
-                type: 'geojson',
-                data: config.plannedCableGeoJSON
-            });
-
+            map.addSource('planned-cable', { type: 'geojson', data: config.plannedCableGeoJSON });
             map.addLayer({
                 id: 'planned-cable-layer',
                 type: 'line',
                 source: 'planned-cable',
-                layout: {
-                    visibility: 'visible'  // always visible
-                },
+                layout: { visibility: 'visible' },
                 paint: {
                     'line-color': '#00FFFF',
                     'line-width': 6,
                     'line-dasharray': [4, 2],
-                    'line-opacity': 0 // start fully transparent (hidden)
+                    'line-opacity': 0.1  // for dev visibility; change to 0 for prod
                 }
             });
-
-            // Bring layer to top
             map.moveLayer('planned-cable-layer');
         }
 
@@ -99,14 +81,21 @@ const config = {
         console.log('Map sources:', Object.keys(map.getStyle().sources));
     },
 
-    // Toggle planned cable layer visibility by adjusting opacity instead of visibility
     showPlannedCable: function (map) {
-        if (!map.getLayer('planned-cable-layer')) {
-            console.log("Planned cable layer missing; initializing layers.");
+        const hasLayer = map.getLayer('planned-cable-layer');
+        const hasSource = map.getSource('planned-cable');
+
+        if (!hasSource || !hasLayer) {
+            console.warn("Planned cable source/layer missing — reinitializing...");
             config.initializeMapLayers(map);
         }
-        console.log("Showing planned-cable-layer");
-        map.setPaintProperty('planned-cable-layer', 'line-opacity', 0.9);
+
+        if (map.getLayer('planned-cable-layer')) {
+            console.log("Showing planned-cable-layer");
+            map.setPaintProperty('planned-cable-layer', 'line-opacity', 0.9);
+        } else {
+            console.error("Planned cable layer still not found after reinit.");
+        }
     },
 
     hidePlannedCable: function (map) {
@@ -122,12 +111,7 @@ const config = {
             title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
             image: './data/canvabargraph.png',
             description: 'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
-            location: {
-                center: [120, 24],
-                zoom: 7,
-                pitch: 0,
-                bearing: 0
-            },
+            location: { center: [120, 24], zoom: 7, pitch: 0, bearing: 0 },
             onChapterEnter: function () {
                 if (typeof map !== 'undefined') {
                     if (typeof drawBarChart === 'function' && !document.querySelector("#bar-chart g")) {
@@ -138,12 +122,8 @@ const config = {
             },
             onChapterExit: function () {
                 if (typeof map !== 'undefined') {
-                    if (map.getLayer('cables-layer')) {
-                        map.removeLayer('cables-layer');
-                    }
-                    if (map.getSource('cables')) {
-                        map.removeSource('cables');
-                    }
+                    if (map.getLayer('cables-layer')) map.removeLayer('cables-layer');
+                    if (map.getSource('cables')) map.removeSource('cables');
                     config.hidePlannedCable(map);
                 }
             }
@@ -158,18 +138,9 @@ const config = {
                 </div>
                 <p>In February 2023, two undersea cables were severed connecting Taiwan's Matsu Islands to China. This disruption led to internet shortages for weeks.</p>
             `,
-            location: {
-                center: [119.97, 26.15],
-                zoom: 8.5,
-                pitch: 45,
-                bearing: 20
-            },
-            onChapterEnter: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            },
-            onChapterExit: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            }
+            location: { center: [119.97, 26.15], zoom: 8.5, pitch: 45, bearing: 20 },
+            onChapterEnter: map => config.hidePlannedCable(map),
+            onChapterExit: map => config.hidePlannedCable(map)
         },
         {
             id: 'incident-keelung',
@@ -181,18 +152,9 @@ const config = {
                 </div>
                 <p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>
             `,
-            location: {
-                center: [122.3, 25.1],
-                zoom: 9,
-                pitch: 30,
-                bearing: -10
-            },
-            onChapterEnter: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            },
-            onChapterExit: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            }
+            location: { center: [122.3, 25.1], zoom: 9, pitch: 30, bearing: -10 },
+            onChapterEnter: map => config.hidePlannedCable(map),
+            onChapterExit: map => config.hidePlannedCable(map)
         },
         {
             id: 'incident-south',
@@ -204,41 +166,24 @@ const config = {
                 </div>
                 <p>In late 2024, a major cable disruption...</p>
             `,
-            location: {
-                center: [121.0, 21.8],
-                zoom: 8,
-                pitch: 40,
-                bearing: 15
-            },
-            onChapterEnter: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            },
-            onChapterExit: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            }
+            location: { center: [121.0, 21.8], zoom: 8, pitch: 40, bearing: 15 },
+            onChapterEnter: map => config.hidePlannedCable(map),
+            onChapterExit: map => config.hidePlannedCable(map)
         },
         {
             id: 'conclusion',
             title: 'Conclusion',
             description: 'In conclusion, .....',
-            location: {
-                center: [120, 26],
-                zoom: 7,
-                pitch: 0,
-                bearing: 0
-            },
-            onChapterEnter: function () {
-                if (typeof map !== 'undefined') config.showPlannedCable(map);
-            },
-            onChapterExit: function () {
-                if (typeof map !== 'undefined') config.hidePlannedCable(map);
-            }
+            location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
+            onChapterEnter: map => config.showPlannedCable(map),
+            onChapterExit: map => config.hidePlannedCable(map)
         }
     ]
 };
 
-// Initialize map layers on load
-map.on('load', function () {
+// Initialize map layers on map load
+map.on('load', () => {
+    console.log("Map loaded — initializing layers.");
     config.initializeMapLayers(map);
 });
 
