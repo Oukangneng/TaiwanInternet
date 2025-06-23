@@ -69,7 +69,7 @@ const config = {
             });
         }
 
-        // Add planned cable GeoJSON source and line layer
+        // Add planned cable GeoJSON source and line layer (initially hidden)
         if (!map.getSource('planned-cable')) {
             map.addSource('planned-cable', {
                 type: 'geojson',
@@ -81,22 +81,25 @@ const config = {
                 type: 'line',
                 source: 'planned-cable',
                 layout: {
-                    visibility: 'none'
+                    visibility: 'none'  // start hidden
                 },
                 paint: {
                     'line-color': '#00FFFF',
                     'line-width': 6,
-                    'line-dasharray': [4, 2]
+                    'line-dasharray': [4, 2],
+                    'line-opacity': 0.9
                 }
             });
+
+            // Move layer to top so it's visible above others when shown
+            map.moveLayer('planned-cable-layer');
         }
 
-        // Debug output
         console.log('Map layers:', map.getStyle().layers.map(l => l.id));
         console.log('Map sources:', Object.keys(map.getStyle().sources));
     },
 
-    // Planned cable visibility toggle
+    // Toggle planned cable layer visibility
     showPlannedCable: function (map) {
         if (map.getLayer('planned-cable-layer')) {
             map.setLayoutProperty('planned-cable-layer', 'visibility', 'visible');
@@ -230,7 +233,8 @@ const config = {
     ]
 };
 
-// 🔁 Make sure you run this when initializing your Mapbox map
+// Initialize map layers on load
 map.on('load', function () {
     config.initializeMapLayers(map);
 });
+
