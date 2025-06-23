@@ -85,7 +85,7 @@ const config = {
                 },
                 paint: {
                     'line-color': '#00FFFF',
-                    'line-width': 4,
+                    'line-width': 6,
                     'line-dasharray': [4, 2]
                 }
             });
