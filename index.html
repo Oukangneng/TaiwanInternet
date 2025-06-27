@@ -7,7 +7,7 @@
 
   <!-- Mapbox GL JS & Scrollama -->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <link  href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <link  href="https://api.tiles.mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
   <script src="https://unpkg.com/scrollama"></script>
 
@@ -80,6 +80,12 @@
     @media (max-width: 750px) {
       #features { width: 90vw; margin: 0 auto; }
     }
+
+    /* --- NEW: let clicks fall through text panes to the map --- */
+    #story, #features, .step { pointer-events: none; }   /* pass-through */
+    .step div,
+    .step a,
+    .step button            { pointer-events: auto; }    /* keep UI live */
   </style>
 </head>
 <body>
