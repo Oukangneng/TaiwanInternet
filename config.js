@@ -1,3 +1,4 @@
+/* ---------- config.js (revised) ---------- */
 const config = {
   style: 'mapbox://styles/mapbox/dark-v11',
   accessToken:
@@ -28,7 +29,7 @@ const config = {
       });
     }
 
-    /* Planned cable (added **once**, hidden by default) ------------- */
+    /* Planned cable (added once, hidden by default) ----------------- */
     if (!map.getSource('planned-cable')) {
       map.addSource('planned-cable', {
         type: 'geojson',
@@ -40,13 +41,15 @@ const config = {
         id: 'planned-cable-layer',
         type: 'line',
         source: 'planned-cable',
-        layout: { visibility: 'none' }, // hidden until called
+        layout: {
+          visibility: 'none',      // hidden until toggled
+          'line-cap': 'round',
+          'line-join': 'round'
+        },
         paint: {
           'line-color': '#00ffff',
           'line-width': 6,
-          'line-dasharray': [4, 2],
-          'line-cap': 'round',
-          'line-join': 'round'
+          'line-dasharray': [4, 2]
         }
       });
     }
@@ -164,7 +167,4 @@ const config = {
   ]
 };
 
-/* ---------- MAP INITIALISATION ---------- */
-map.on('load', () => {
-  config.initializeMapLayers(map);
-});
+
