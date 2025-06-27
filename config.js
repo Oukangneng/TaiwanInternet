@@ -159,6 +159,7 @@ const config = {
     {
       id: 'conclusion',
       title: 'Moving Forward, What to Expect?',
+      image: './data/focustaiwan.jpg',
       description: 'The cyan-colored line represents the new undersea cable, "Taiwan-Matsu No. 4," which is projected to be completed in 2026. This cable will link Dongyin Island with Bali in New Taipei. Chunghwa Telecom stated that the cable will be protected by plastic or metal tubes and will avoid busy fishing grounds.',
       location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
       onChapterEnter: map => config.showPlannedCable(map),
