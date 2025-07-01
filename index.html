@@ -32,7 +32,13 @@
     a, a:hover, a:visited { color: #1da1f2; }
 
     /* ——— Map behind the story ——— */
-    #map { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; }
+    #map { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
+
+    /* optional stacking context for popups */
+    .mapboxgl-popup {
+      max-width: 200px;
+      z-index: 5;
+    }
 
     /* ——— Story layout ——— */
     #header, #footer { text-align: center; }
@@ -77,9 +83,6 @@
     .red-marker { }
 
     /* ——— Popup look‑and‑feel ——— */
-    .mapboxgl-popup {
-      max-width: 200px;
-    }
     .mapboxgl-popup-content {
       text-align: center;
       font-family: 'Open Sans', sans-serif;
