@@ -124,8 +124,10 @@ const config = {
       title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025',
       subtitle: 'A visual timeline of cable malfunctions disrupting Taiwan’s internet connections in 2025.',
       image: './data/canvabargraph.png',
-      description:
-        'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
+      description:`This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)
+    <br><br>
+    <small>This dataset was compiled using primary sources from the Taipei Fisheries Agency (Chinese) and the Ministry of Digital Affairs (English), supplemented by secondary sources including media reports from Chunghwa Telecom and reputable news outlets such as the Taipei Times, Focus Taiwan, Taiwan News, and the New York Times.</small>
+  `,
       location: { center: [120, 24], zoom: 7, pitch: 0, bearing: 0 },
       onChapterEnter() {
         if (typeof map !== 'undefined') {
