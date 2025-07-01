@@ -6,7 +6,7 @@ const config = {
   showMarkers: false,
   theme: 'dark',
   alignment: 'left',
-  footer: 'Tracking Taiwan Undersea Cable Incidents',
+  footer: 'Monitoring Taiwan Undersea Cable Incidents in 2025',
 
   cablesGeoJSON:
     'https://oukangneng.github.io/TaiwanInternet/data/Global_Submarine_Cables.geojson',
@@ -121,7 +121,7 @@ const config = {
   chapters: [
     {
       id: 'intro',
-      title: 'Monitoring Taiwan’s Subsea Internet Cable Incidents',
+      title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025',
       image: './data/canvabargraph.png',
       description:
         'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
