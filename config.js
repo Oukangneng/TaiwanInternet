@@ -142,7 +142,7 @@ const config = {
     },
     {
       id: 'incident-matsu',
-      title: 'The Matsu Islands Incident (Part 1 of 2)',
+      title: 'The Matsu Islands Incident(s)',
       image: './data/Matsu.png',
       description: `
   <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
@@ -161,11 +161,17 @@ const config = {
     },
     {
       id: 'incident-keelung',
-      title: 'APCN-2 Cable Disruption near Keelung',
+      title: 'The TPE Cable Disruption (January 2025)',
       image: './data/keelung_incident.jpg',
-      description:
-        '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).</div><p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>',
-      location: { center: [122.3, 25.1], zoom: 9, pitch: 30, bearing: -10 },
+      description:`
+    <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
+      Map shows the approximate location of the TPE cable break, roughly 68 kilometers northeast of Taiwan.
+    </div>
+    <p>On January 3, 2025, the Trans-Pacific Express (TPE) cable system—Taiwan’s high-capacity digital link to the United States and Asia—was damaged in waters about 68 kilometers off Taiwan’s northeast coast.</p>
+    <p>The cause was suspected to be a vessel flying a Tanzanian flag, the <i>XingShun 39</i>. This incident, reported by the New York Times and Taiwan’s Ministry of Digital Affairs, underscores how foreign-flagged ships can threaten critical infrastructure under ambiguous circumstances.</p>
+    <p>With cable breaks like this happening far from shore and outside Taiwan’s direct jurisdiction, repair efforts are costly, slow, and diplomatically sensitive.</p>
+  `,
+      location: { center: [122.3, 25.1], zoom: 7.5, pitch: 30, bearing: -10 },
       onChapterEnter: map => {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
