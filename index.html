@@ -40,6 +40,20 @@
       z-index: 5;
     }
 
+    /* custom popup colours to avoid white-on-white */
+    .mapboxgl-popup-content {
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
+      background: rgba(0,0,0,0.85);
+      color: #fafafa;
+      border-radius: 6px;
+      padding: 10px 15px;
+    }
+    /* arrow colour below the popup */
+    .mapboxgl-popup-tip {
+      border-top-color: rgba(0,0,0,0.85);
+    }
+
     /* ——— Story layout ——— */
     #header, #footer { text-align: center; }
     #header { margin: 3vh auto; width: 90vw; padding: 2vh; }
@@ -83,11 +97,6 @@
     /* Custom red marker style (optional, set inline in JS if desired) */
     .red-marker { }
 
-    /* ——— Popup look‑and‑feel ——— */
-    .mapboxgl-popup-content {
-      text-align: center;
-      font-family: 'Open Sans', sans-serif;
-    }
   </style>
 </head>
 <body>
