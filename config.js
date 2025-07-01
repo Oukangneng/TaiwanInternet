@@ -144,8 +144,14 @@ const config = {
       id: 'incident-matsu',
       title: 'The Matsu Islands Incident (Part 1 of 2)',
       image: './data/Matsu.png',
-      description:
-        '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div><p>In February 2023, two undersea cables were severed connecting Taiwan\'s Matsu Islands to China. This disruption led to internet shortages for weeks.</p>',
+      description: `
+  <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
+    Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
+  </div>
+  <p>In February 2023, two undersea cables connecting Taiwan's Matsu Islands to China were severed, leaving some of the islands' 14,000 residents without internet access for up to 51 days.</p>
+  <p>The area around the Matsu Islands remains a hotspot of activity. However, unlike the incident two years ago, the 2025 cable malfunction was attributed to natural degradation. Earthquakes, turbidity currents, and seabed erosion are all major contributing factors.</p>
+  <p>It's important to note the combination of frequent "gray zone" activities and the region’s vulnerable geography continues to undermine Taiwan’s internet security in this area.</p>
+`,
       location: { center: [119.97, 26.15], zoom: 8.5, pitch: 45, bearing: 20 },
       onChapterEnter: map => {
         config.hidePlannedCable(map);
