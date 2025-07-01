@@ -162,10 +162,10 @@ const config = {
     {
       id: 'incident-keelung',
       title: 'The TPE Cable Disruption (January 2025)',
-      image: './data/keelung_incident.jpg',
+      image: './data/Xingshun39.jpeg',
       description:`
     <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
-      Map shows the approximate location of the TPE cable break, roughly 68 kilometers northeast of Taiwan.
+     This image shows the Xingshun 39, a general cargo ship (source: VesselFinder).
     </div>
     <p>On January 3, 2025, the Trans-Pacific Express (TPE) cable system—Taiwan’s high-capacity digital link to the United States and Asia—was damaged in waters about 68 kilometers off Taiwan’s northeast coast.</p>
     <p>The cause was suspected to be a vessel flying a Tanzanian flag, the <i>XingShun 39</i>. This incident, reported by the New York Times and Taiwan’s Ministry of Digital Affairs, underscores how foreign-flagged ships can threaten critical infrastructure under ambiguous circumstances.</p>
