@@ -7,7 +7,7 @@
 
   <!-- Mapbox GL JS & Scrollama -->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <link  href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
   <script src="https://unpkg.com/scrollama"></script>
 
@@ -15,10 +15,10 @@
   <script src="./config.js"></script>
 
   <!-- Social meta & favicon -->
-  <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="Tracking Taiwan Undersea Cable Incidents" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tracking Taiwan Undersea Cable Incidents" />
   <meta name="twitter:description" content="A visualization of Taiwan's undersea cable incidents and their impact." />
-  <meta name="twitter:image"       content="./data/taiwan_cables_map.jpg" />
+  <meta name="twitter:image" content="./data/taiwan_cables_map.jpg" />
   <link rel="icon" href="./data/taiwan_cables_map.jpg" />
 
   <style>
@@ -68,20 +68,14 @@
     #features,
     .step { pointer-events: none; }
 
-    /* Re-enable pointer events where needed */
+    /* Re‑enable them where needed */
     .step > div,
     .step a,
     .step button { pointer-events: auto; }
 
-    /* Marker styling */
-    .marker {
-      width: 30px;
-      height: 30px;
-      background-color: red;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    /* Custom red marker style (optional, but already set inline in JS) */
+    .red-marker {
+      /* you can add CSS here if you want */
     }
   </style>
 </head>
@@ -92,7 +86,7 @@
 
   <script>
     /* ——— Build the scrolling structure ——— */
-    const story    = document.getElementById('story');
+    const story = document.getElementById('story');
     const features = document.createElement('div');
     features.id = 'features';
     features.classList.add({ left:'lefty', center:'centered', right:'righty' }[config.alignment]);
@@ -133,7 +127,7 @@
       story.appendChild(footer);
     }
 
-    /* ——— Initialize Map ——— */
+    /* ——— Map ——— */
     mapboxgl.accessToken = config.accessToken;
     const map = new mapboxgl.Map({
       container: 'map',
@@ -151,33 +145,8 @@
     map.on('load', () => {
       config.initializeMapLayers(map);
 
-      // Fetch cable incidents GeoJSON and create markers dynamically
-      fetch(config.redGeoJSON)
-        .then(response => response.json())
-        .then(data => {
-          data.features.forEach(feature => {
-            // Create a marker element
-            const el = document.createElement('div');
-            el.className = 'marker';
-
-            // Create the marker and popup
-            new mapboxgl.Marker(el)
-              .setLngLat(feature.geometry.coordinates)
-              .setPopup(
-                new mapboxgl.Popup({ offset: 25 })
-                  .setHTML(`
-                    <strong>${feature.properties.cable || 'Unknown Cable'}</strong><br>
-                    <em>${feature.properties.date || ''}</em><br>
-                    ${feature.properties.distance || ''}<br>
-                    ${feature.properties.notes ? `<small>${feature.properties.notes}</small>` : ''}
-                  `)
-              )
-              .addTo(map);
-          });
-        })
-        .catch(error => {
-          console.error('Error loading cable incidents GeoJSON:', error);
-        });
+      // Add clickable red markers with popups dynamically from GeoJSON
+      config.addIncidentMarkers(map);
 
       /* Scrollama */
       const scroller = scrollama();
@@ -199,3 +168,4 @@
   </script>
 </body>
 </html>
+
