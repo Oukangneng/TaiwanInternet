@@ -72,6 +72,17 @@
     .step > div,
     .step a,
     .step button { pointer-events: auto; }
+
+    /* Marker styling */
+    .marker {
+      width: 30px;
+      height: 30px;
+      background-color: red;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 <body>
@@ -137,12 +148,28 @@
       })
     });
 
-    if (config.showMarkers) new mapboxgl.Marker()
-        .setLngLat(config.chapters[0].location.center).addTo(map);
-
-    /* After style loads */
     map.on('load', () => {
       config.initializeMapLayers(map);
+
+      // Create markers for all chapters if showMarkers is true
+      if (config.showMarkers) {
+        config.chapters.forEach((feature, i) => {
+          // Create a div element for the marker
+          const el = document.createElement('div');
+          el.className = 'marker';  // CSS class for styling
+
+          // Create the marker with popup
+          new mapboxgl.Marker(el)
+            .setLngLat(feature.location.center)
+            .setPopup(
+              new mapboxgl.Popup({ offset: 25 })
+                .setHTML(
+                  `<h3>${feature.title || ''}</h3><p>${feature.description || ''}</p>`
+                )
+            )
+            .addTo(map);
+        });
+      }
 
       /* Scrollama */
       const scroller = scrollama();
@@ -164,4 +191,3 @@
   </script>
 </body>
 </html>
-
