@@ -52,43 +52,54 @@ const config = {
         }
       });
     }
+  },
 
-    /* Incidents ----------------------------------------------------- */
-    if (!map.getSource('debug-incidents')) {
-      map.addSource('debug-incidents', {
-        type: 'geojson',
-        data: config.redGeoJSON
-      });
-      map.addLayer({
-        id: 'debug-layer',
-        type: 'circle',
-        source: 'debug-incidents',
-        paint: {
-          'circle-radius': 12,
-          'circle-color': '#ff0000',
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#000'
-        }
-      });
-
-      /* Pop-ups & cursor effects */
-      map.on('click', 'debug-layer', e => {
-        const p = e.features[0].properties;
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(
-            `<strong>${p.cable}</strong><br><em>${p.date}</em><br>${p.distance}${
-              p.notes ? `<br><small>${p.notes}</small>` : ''
-            }`
-          )
-          .addTo(map);
-      });
-      map.on('mouseenter', 'debug-layer', () => (map.getCanvas().style.cursor = 'pointer'));
-      map.on('mouseleave', 'debug-layer', () => (map.getCanvas().style.cursor = ''));
+  /**
+   * Fetch the incident GeoJSON and add red circle markers with popups
+   * using mapboxgl.Marker instances.
+   */
+  addIncidentMarkers(map) {
+    // Clear any existing markers first (optional, if you want to update dynamically)
+    if (this._markers) {
+      this._markers.forEach(marker => marker.remove());
     }
+    this._markers = [];
 
-    console.log('Map layers:', map.getStyle().layers.map(l => l.id));
-    console.log('Map sources:', Object.keys(map.getStyle().sources));
+    fetch(this.redGeoJSON)
+      .then(response => response.json())
+      .then(data => {
+        data.features.forEach(feature => {
+          const el = document.createElement('div');
+          el.className = 'red-marker';
+          el.style.width = '24px';
+          el.style.height = '24px';
+          el.style.borderRadius = '50%';
+          el.style.backgroundColor = 'red';
+          el.style.border = '2px solid black';
+          el.style.boxShadow = '0 0 5px rgba(0,0,0,0.5)';
+          el.style.cursor = 'pointer';
+
+          // Build popup HTML, adjust property names as needed
+          const props = feature.properties;
+          const popupHTML = `
+            <strong>${props.cable || 'No Cable Name'}</strong><br>
+            <em>${props.date || 'No Date'}</em><br>
+            ${props.distance || ''}${props.notes ? `<br><small>${props.notes}</small>` : ''}
+          `;
+
+          const marker = new mapboxgl.Marker(el)
+            .setLngLat(feature.geometry.coordinates)
+            .setPopup(
+              new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML)
+            )
+            .addTo(map);
+
+          this._markers.push(marker);
+        });
+      })
+      .catch(err => {
+        console.error('Failed to load or parse redGeoJSON:', err);
+      });
   },
 
   /* ---------- SHOW / HIDE HELPERS ---------- */
@@ -121,6 +132,7 @@ const config = {
             drawBarChart();
           }
           config.hidePlannedCable(map);
+          config.addIncidentMarkers(map);
         }
       },
       onChapterExit: map => config.hidePlannedCable(map)
@@ -132,7 +144,10 @@ const config = {
       description:
         '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).</div><p>In February 2023, two undersea cables were severed connecting Taiwan\'s Matsu Islands to China. This disruption led to internet shortages for weeks.</p>',
       location: { center: [119.97, 26.15], zoom: 8.5, pitch: 45, bearing: 20 },
-      onChapterEnter: map => config.hidePlannedCable(map),
+      onChapterEnter: map => {
+        config.hidePlannedCable(map);
+        config.addIncidentMarkers(map);
+      },
       onChapterExit: map => config.hidePlannedCable(map)
     },
     {
@@ -142,7 +157,10 @@ const config = {
       description:
         '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the APCN-2 cable disruption near Keelung, Taiwan (January 2024).</div><p>On January 5, 2024, the APCN-2 cable was mysteriously severed near Keelung, Taiwan. The cause remains unknown. This cable is vital for Taiwan’s connection to global internet infrastructure.</p>',
       location: { center: [122.3, 25.1], zoom: 9, pitch: 30, bearing: -10 },
-      onChapterEnter: map => config.hidePlannedCable(map),
+      onChapterEnter: map => {
+        config.hidePlannedCable(map);
+        config.addIncidentMarkers(map);
+      },
       onChapterExit: map => config.hidePlannedCable(map)
     },
     {
@@ -152,7 +170,10 @@ const config = {
       description:
         '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div><p>In late 2024, a major cable disruption...</p>',
       location: { center: [121.0, 21.8], zoom: 8, pitch: 40, bearing: 15 },
-      onChapterEnter: map => config.hidePlannedCable(map),
+      onChapterEnter: map => {
+        config.hidePlannedCable(map);
+        config.addIncidentMarkers(map);
+      },
       onChapterExit: map => config.hidePlannedCable(map)
     },
     {
@@ -161,10 +182,12 @@ const config = {
       image: './data/focustaiwan.jpg',
       description: 'The cyan-colored line represents the new undersea cable, "Taiwan-Matsu No. 4," which is projected to be completed in 2026. This cable will link Dongyin Island with Bali in New Taipei. Chunghwa Telecom stated that the cable will be protected by plastic or metal tubes and will avoid busy fishing grounds.',
       location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
-      onChapterEnter: map => config.showPlannedCable(map),
+      onChapterEnter: map => {
+        config.showPlannedCable(map);
+        config.addIncidentMarkers(map);
+      },
       onChapterExit: map => config.showPlannedCable(map)
     }
   ]
 };
-
 
