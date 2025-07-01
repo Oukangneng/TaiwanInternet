@@ -180,10 +180,10 @@ const config = {
     },
     {
       id: 'incident-south',
-      title: 'Disruption South of Taiwan',
+      title: 'Taiwan - Penghu No. 3 Severed (February 2025)',
       image: './data/south_taiwan_incident.jpg',
       description:
-        '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the location of the cable disruption south of Taiwan (Late 2024).</div><p>In late 2024, a major cable disruption...</p>',
+        '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the location of the cable disruption south of Taiwan.</div><p>This incident marks the second time a foreign-flagged vessel crewed by Chinese nationals has caused a disruption to Taiwan’s undersea infrastructure. It raises serious concerns about plausible deniability, flags of convenience, and the possibility of China’s indirect involvement in these disruptions. The Penghu No. 3 cable is a critical domestic link, and this event reflects a broader pattern of escalating gray-zone pressure on Taiwan’s communications network.</p>',
       location: { center: [121.0, 21.8], zoom: 8, pitch: 40, bearing: 15 },
       onChapterEnter: map => {
         config.hidePlannedCable(map);
