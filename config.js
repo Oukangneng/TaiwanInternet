@@ -122,6 +122,7 @@ const config = {
     {
       id: 'intro',
       title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025',
+      subtitle: 'A visual timeline of cable malfunctions disrupting Taiwan’s internet connections in 2025.',
       image: './data/canvabargraph.png',
       description:
         'This visual timeline will guide you through incidents of undersea cables being severed between Taiwan and other regions. (Scroll ⤓ to begin exploring the timeline)',
