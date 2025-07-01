@@ -5,7 +5,7 @@
   <title>Tracking Taiwan Undersea Cable Incidents</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
-  <!-- Mapbox GL JS & Scrollama -->
+  <!-- Mapbox GL JS & Scrollama -->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link  href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
@@ -14,7 +14,7 @@
   <!-- Config (defines `config`) -->
   <script src="./config.js"></script>
 
-  <!-- Social meta & favicon -->
+  <!-- Social meta & favicon -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="Tracking Taiwan Undersea Cable Incidents" />
   <meta name="twitter:description" content="A visualization of Taiwan's undersea cable incidents and their impact." />
@@ -68,7 +68,7 @@
     #features,
     .step { pointer-events: none; }
 
-    /* Re‑enable them where needed */
+    /* Re-enable pointer events where needed */
     .step > div,
     .step a,
     .step button { pointer-events: auto; }
@@ -133,7 +133,7 @@
       story.appendChild(footer);
     }
 
-    /* ——— Map ——— */
+    /* ——— Initialize Map ——— */
     mapboxgl.accessToken = config.accessToken;
     const map = new mapboxgl.Map({
       container: 'map',
@@ -151,25 +151,33 @@
     map.on('load', () => {
       config.initializeMapLayers(map);
 
-      // Create markers for all chapters if showMarkers is true
-      if (config.showMarkers) {
-        config.chapters.forEach((feature, i) => {
-          // Create a div element for the marker
-          const el = document.createElement('div');
-          el.className = 'marker';  // CSS class for styling
+      // Fetch cable incidents GeoJSON and create markers dynamically
+      fetch(config.redGeoJSON)
+        .then(response => response.json())
+        .then(data => {
+          data.features.forEach(feature => {
+            // Create a marker element
+            const el = document.createElement('div');
+            el.className = 'marker';
 
-          // Create the marker with popup
-          new mapboxgl.Marker(el)
-            .setLngLat(feature.location.center)
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 })
-                .setHTML(
-                  `<h3>${feature.title || ''}</h3><p>${feature.description || ''}</p>`
-                )
-            )
-            .addTo(map);
+            // Create the marker and popup
+            new mapboxgl.Marker(el)
+              .setLngLat(feature.geometry.coordinates)
+              .setPopup(
+                new mapboxgl.Popup({ offset: 25 })
+                  .setHTML(`
+                    <strong>${feature.properties.cable || 'Unknown Cable'}</strong><br>
+                    <em>${feature.properties.date || ''}</em><br>
+                    ${feature.properties.distance || ''}<br>
+                    ${feature.properties.notes ? `<small>${feature.properties.notes}</small>` : ''}
+                  `)
+              )
+              .addTo(map);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading cable incidents GeoJSON:', error);
         });
-      }
 
       /* Scrollama */
       const scroller = scrollama();
