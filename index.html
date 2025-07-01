@@ -5,16 +5,16 @@
   <title>Tracking Taiwan Undersea Cable Incidents</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
-  <!-- Mapbox GL JS & Scrollama -->
+  <!-- Mapbox GL JS & Scrollama -->
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link  href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
   <script src="https://unpkg.com/scrollama"></script>
 
-  <!-- Config (defines `config` used below) -->
+  <!-- Config (defines `config`) -->
   <script src="./config.js"></script>
 
-  <!-- Social‑media meta -->
+  <!-- Social meta & favicon -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="Tracking Taiwan Undersea Cable Incidents" />
   <meta name="twitter:description" content="A visualization of Taiwan's undersea cable incidents and their impact." />
@@ -22,39 +22,22 @@
   <link rel="icon" href="./data/taiwan_cables_map.jpg" />
 
   <style>
-    /* ---------- Base typography ---------- */
+    /* ——— Base typography ——— */
     @import url('https://rsms.me/inter/inter.css');
     html { font-family: 'Inter', sans-serif; }
     @supports (font-variation-settings: normal) {
       html { font-family: 'Inter var', sans-serif; }
     }
-
-    body {
-      margin: 0;
-      padding: 0;
-      color: #fafafa;
-      background: #000;
-    }
+    body { margin: 0; padding: 0; color: #fafafa; background: #000; }
     a, a:hover, a:visited { color: #1da1f2; }
 
-    /* ---------- Map sits behind the story ---------- */
-    #map {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;            /* keep map underneath everything */
-    }
+    /* ——— Map behind the story ——— */
+    #map { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; }
 
-    /* ---------- Story layout ---------- */
+    /* ——— Story layout ——— */
     #header, #footer { text-align: center; }
     #header { margin: 3vh auto; width: 90vw; padding: 2vh; }
-    #footer {
-      min-height: 5vh;
-      padding: 2vh;
-      font-size: 14px;
-      background: #111;
-    }
+    #footer { min-height: 5vh; padding: 2vh; font-size: 14px; background: #111; }
 
     #features { padding: 10vh 0; }
 
@@ -62,44 +45,33 @@
     .lefty    { width: 33vw; margin-left: 5vw; }
     .righty   { width: 33vw; margin-left: 62vw; }
 
-    .step {
-      padding-bottom: 50vh;
-      opacity: 0.25;
-      transition: opacity 0.5s;
-    }
+    .step { padding-bottom: 50vh; opacity: 0.25; transition: opacity 0.5s; }
     .step.active { opacity: 0.9; }
 
     .step div {
       padding: 25px 50px;
       font-size: 16px;
       line-height: 1.6;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0,0,0,0.8);
       border-radius: 8px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
     }
-
     .step img {
-      width: 100%;
-      max-height: 400px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin: 15px 0;
+      width: 100%; max-height: 400px; object-fit: cover;
+      border-radius: 8px; margin: 15px 0;
     }
 
-    @media (max-width: 750px) {
-      #features { width: 90vw; margin: 0 auto; }
-    }
+    @media (max-width: 750px) { #features { width: 90vw; margin: 0 auto; } }
 
-    /* ---------- NEW: let pointer events pass through the panes ---------- */
-    /* The scrolling container itself should *not* block clicks on the map */
-    #story { pointer-events: none; }
+    /* ——— Pass pointer events through transparent panels ——— */
+    #story,
+    #features,
+    .step { pointer-events: none; }
 
-    /* Re‑enable pointer events only on interactive / selectable parts */
+    /* Re‑enable them where needed */
     .step > div,
     .step a,
-    .step button {
-      pointer-events: auto;
-    }
+    .step button { pointer-events: auto; }
   </style>
 </head>
 <body>
@@ -108,24 +80,23 @@
   <div id="story"></div>
 
   <script>
-    /* ---------- Build the scrolling story structure ---------- */
+    /* ——— Build the scrolling structure ——— */
     const story    = document.getElementById('story');
     const features = document.createElement('div');
     features.id = 'features';
-    features.classList.add({ left: 'lefty', center: 'centered', right: 'righty' }[config.alignment]);
+    features.classList.add({ left:'lefty', center:'centered', right:'righty' }[config.alignment]);
 
     /* Header */
     if (config.title || config.subtitle || config.byline) {
       const header = document.createElement('div');
-      header.id = 'header';
-      header.classList.add(config.theme);
+      header.id = 'header'; header.classList.add(config.theme);
       if (config.title)    header.innerHTML += `<h1>${config.title}</h1>`;
       if (config.subtitle) header.innerHTML += `<h2>${config.subtitle}</h2>`;
       if (config.byline)   header.innerHTML += `<p>${config.byline}</p>`;
       story.appendChild(header);
     }
 
-    /* Chapters (steps) */
+    /* Steps */
     config.chapters.forEach((c, i) => {
       const step = document.createElement('div');
       step.className = 'step' + (i === 0 ? ' active' : '');
@@ -146,56 +117,45 @@
     /* Footer */
     if (config.footer) {
       const footer = document.createElement('div');
-      footer.id = 'footer';
-      footer.classList.add(config.theme);
+      footer.id = 'footer'; footer.classList.add(config.theme);
       footer.innerHTML = `<p>${config.footer}</p>`;
       story.appendChild(footer);
     }
 
-    /* ---------- Map ---------- */
+    /* ——— Map ——— */
     mapboxgl.accessToken = config.accessToken;
     const map = new mapboxgl.Map({
       container: 'map',
-      style: config.style,
-      center: config.chapters[0].location.center,
-      zoom: config.chapters[0].location.zoom,
-      bearing: config.chapters[0].location.bearing,
-      pitch: config.chapters[0].location.pitch,
-      scrollZoom: false,
+      style:     config.style,
+      center:    config.chapters[0].location.center,
+      zoom:      config.chapters[0].location.zoom,
+      bearing:   config.chapters[0].location.bearing,
+      pitch:     config.chapters[0].location.pitch,
+      scrollZoom:false,
       transformRequest: url => ({
         url: url + (url.includes('?') ? '&' : '?') + 'pluginName=MapTaiwanCables'
       })
     });
 
-    /* Optional marker on first chapter */
-    if (config.showMarkers) {
-      new mapboxgl.Marker()
-        .setLngLat(config.chapters[0].location.center)
-        .addTo(map);
-    }
+    if (config.showMarkers) new mapboxgl.Marker()
+        .setLngLat(config.chapters[0].location.center).addTo(map);
 
-    /* ---------- After the style loads ---------- */
+    /* After style loads */
     map.on('load', () => {
-      /* Add custom layers (cables, incidents, planned cable) */
       config.initializeMapLayers(map);
 
-      /* ---------- Scrollama ---------- */
+      /* Scrollama */
       const scroller = scrollama();
-      scroller
-        .setup({
-          step: '.step',
-          offset: 0.5,
-          progress: true
-        })
-        .onStepEnter(response => {
-          const chap = config.chapters.find(c => c.id === response.element.id);
-          response.element.classList.add('active');
+      scroller.setup({ step: '.step', offset: 0.5, progress: true })
+        .onStepEnter(r => {
+          const chap = config.chapters.find(c => c.id === r.element.id);
+          r.element.classList.add('active');
           map.flyTo(chap.location);
           chap.onChapterEnter?.(map);
         })
-        .onStepExit(response => {
-          const chap = config.chapters.find(c => c.id === response.element.id);
-          response.element.classList.remove('active');
+        .onStepExit(r => {
+          const chap = config.chapters.find(c => c.id === r.element.id);
+          r.element.classList.remove('active');
           chap.onChapterExit?.(map);
         });
 
@@ -204,3 +164,4 @@
   </script>
 </body>
 </html>
+
