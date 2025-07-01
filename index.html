@@ -15,10 +15,10 @@
   <script src="./config.js"></script>
 
   <!-- Social meta & favicon -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Tracking Taiwan Undersea Cable Incidents" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Tracking Taiwan Undersea Cable Incidents" />
   <meta name="twitter:description" content="A visualization of Taiwan's undersea cable incidents and their impact." />
-  <meta name="twitter:image" content="./data/taiwan_cables_map.jpg" />
+  <meta name="twitter:image"       content="./data/taiwan_cables_map.jpg" />
   <link rel="icon" href="./data/taiwan_cables_map.jpg" />
 
   <style>
@@ -73,9 +73,16 @@
     .step a,
     .step button { pointer-events: auto; }
 
-    /* Custom red marker style (optional, but already set inline in JS) */
-    .red-marker {
-      /* you can add CSS here if you want */
+    /* Custom red marker style (optional, set inline in JS if desired) */
+    .red-marker { }
+
+    /* ——— Popup look‑and‑feel ——— */
+    .mapboxgl-popup {
+      max-width: 200px;
+    }
+    .mapboxgl-popup-content {
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
     }
   </style>
 </head>
@@ -145,7 +152,7 @@
     map.on('load', () => {
       config.initializeMapLayers(map);
 
-      // Add clickable red markers with popups dynamically from GeoJSON
+      /* Add clickable red markers with popups */
       config.addIncidentMarkers(map);
 
       /* Scrollama */
@@ -168,4 +175,3 @@
   </script>
 </body>
 </html>
-
