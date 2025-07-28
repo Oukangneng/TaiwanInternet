@@ -124,7 +124,7 @@ const config = {
       title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025 | By Owen OConnell',
       subtitle: 'A visual timeline of cable malfunctions disrupting Taiwan’s internet connections in 2025.',
       image: './data/canvabargraph.png',
-      description:`This visual timeline guides you through undersea cable disruptions between Taiwan and other regions in 2025. Each red circle marks a reported malfunction—click on a circle to view details about the incident. (Scroll ⤓ to begin exploring.)
+      description:`Taiwan’s digital lifelines are under growing pressure. In 2025 alone, multiple undersea cables connecting the island to the world were cut, degraded, or sabotaged—disrupting communications and exposing deep vulnerabilities. <br><br> This visual tracker guides you through undersea cable disruptions between Taiwan and other regions in 2025. Each red circle marks a reported malfunction—click on a circle to view details about the incident. (Scroll ⤓ to begin exploring.)
     <br><br>
     <small>Sources:</small>
   `,
