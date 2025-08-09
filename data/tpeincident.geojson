@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "date": "2025-01-03",
+        "cable": "Trans Pacific Express Cable System (TPE)",
+        "distance": "About 68 km off northeast Taiwan",
+        "notes": "Section S3S. Suspected Tanzania flagged XingShun 39. Source: New York Times, MODA Report."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.7892, 25.3787]
+      }
+    }
+  ]
+}
