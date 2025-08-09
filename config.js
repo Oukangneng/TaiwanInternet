@@ -1,4 +1,4 @@
-/* ---------- config.js (revised) ---------- */
+/* ---------- config.js (revised with special incident support) ---------- */
 const config = {
   style: 'mapbox://styles/mapbox/dark-v11',
   accessToken:
@@ -14,6 +14,10 @@ const config = {
     'https://oukangneng.github.io/TaiwanInternet/data/cable_incidents.geojson',
   plannedCableGeoJSON:
     'https://raw.githubusercontent.com/Oukangneng/TaiwanInternet/main/data/Taiwan_Matsu_No_4_Cable.geojson',
+
+  /* NEW — single special incident */
+  specialIncidentGeoJSON:
+    'https://oukangneng.github.io/TaiwanInternet/data/special_incident.geojson',
 
   /* ---------- LAYERS ---------- */
   initializeMapLayers(map) {
@@ -41,7 +45,7 @@ const config = {
         type: 'line',
         source: 'planned-cable',
         layout: {
-          visibility: 'none',      // hidden until toggled
+          visibility: 'none',
           'line-cap': 'round',
           'line-join': 'round'
         },
@@ -55,31 +59,27 @@ const config = {
   },
 
   /**
-   * Fetch the incident GeoJSON and add red circle markers with popups
-   * using mapboxgl.Marker instances.
+   * Red incident markers (multiple points)
    */
   addIncidentMarkers(map) {
-    // Clear any existing markers first (optional, if you want to update dynamically)
     if (this._markers) {
       this._markers.forEach(marker => marker.remove());
     }
     this._markers = [];
 
     fetch(this.redGeoJSON)
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
         data.features.forEach(feature => {
           const el = document.createElement('div');
           el.className = 'red-marker';
-          el.style.width = '24px';
-          el.style.height = '24px';
-          el.style.borderRadius = '50%';
-          el.style.backgroundColor = 'red';
-          el.style.border = '2px solid black';
-          el.style.boxShadow = '0 0 5px rgba(0,0,0,0.5)';
-          el.style.cursor = 'pointer';
+          el.style.cssText = `
+            width: 24px; height: 24px; border-radius: 50%;
+            background-color: red; border: 2px solid black;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            cursor: pointer;
+          `;
 
-          // Build popup HTML, adjust property names as needed
           const props = feature.properties;
           const popupHTML = `
             <strong>${props.cable || 'No Cable Name'}</strong><br>
@@ -89,28 +89,60 @@ const config = {
 
           const marker = new mapboxgl.Marker(el)
             .setLngLat(feature.geometry.coordinates)
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML)
-            )
+            .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
             .addTo(map);
 
           this._markers.push(marker);
         });
       })
-      .catch(err => {
-        console.error('Failed to load or parse redGeoJSON:', err);
-      });
+      .catch(err => console.error('Failed to load redGeoJSON:', err));
+  },
+
+  /**
+   * Special highlighted incident (single point)
+   */
+  addSpecialIncidentMarker(map) {
+    if (this._specialMarker) {
+      this._specialMarker.remove();
+    }
+    this._specialMarker = null;
+
+    fetch(this.specialIncidentGeoJSON)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.features.length) return;
+        const feature = data.features[0];
+
+        const el = document.createElement('div');
+        el.style.cssText = `
+          width: 28px; height: 28px; border-radius: 50%;
+          background-color: yellow; border: 3px solid black;
+          box-shadow: 0 0 12px rgba(255,255,0,0.9);
+          cursor: pointer;
+        `;
+
+        const props = feature.properties || {};
+        const popupHTML = `
+          <strong>${props.cable || 'Special Cable'}</strong><br>
+          <em>${props.date || 'No Date'}</em><br>
+          ${props.notes || ''}
+        `;
+
+        this._specialMarker = new mapboxgl.Marker(el)
+          .setLngLat(feature.geometry.coordinates)
+          .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
+          .addTo(map);
+      })
+      .catch(err => console.error('Failed to load specialIncidentGeoJSON:', err));
   },
 
   /* ---------- SHOW / HIDE HELPERS ---------- */
   showPlannedCable(map) {
     if (!map.getLayer('planned-cable-layer')) {
-      console.warn('planned-cable layer missing – re-adding');
       config.initializeMapLayers(map);
     }
     map.setLayoutProperty('planned-cable-layer', 'visibility', 'visible');
   },
-
   hidePlannedCable(map) {
     if (map.getLayer('planned-cable-layer')) {
       map.setLayoutProperty('planned-cable-layer', 'visibility', 'none');
@@ -124,84 +156,14 @@ const config = {
       title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025 | By Owen OConnell',
       subtitle: 'A visual timeline of cable malfunctions disrupting Taiwan’s internet connections in 2025.',
       image: './data/canvabargraph.png',
-      description:`Taiwan’s digital lifelines are under growing pressure. In 2025 alone, multiple undersea cables connecting the island to the world were cut, degraded, or sabotaged—disrupting communications and exposing deep vulnerabilities. <br><br> This visual tracker guides you through undersea cable disruptions between Taiwan and other regions in 2025. Each red circle marks a reported malfunction—click on a circle to view details about the incident. (Scroll ⤓ to begin exploring.)
-    <br><br>
-    <small>Sources:</small>
-  `,
+      description: `Taiwan’s digital lifelines...`,
       location: { center: [120, 24], zoom: 7, pitch: 0, bearing: 0 },
       onChapterEnter() {
-        if (typeof map !== 'undefined') {
-          if (typeof drawBarChart === 'function' && !document.querySelector('#bar-chart g')) {
-            drawBarChart();
-          }
-          config.hidePlannedCable(map);
-          config.addIncidentMarkers(map);
-        }
-      },
-      onChapterExit: map => config.hidePlannedCable(map)
-    },
-    {
-      id: 'incident-matsu',
-      title: 'The Matsu Islands Incident(s)',
-      image: './data/Matsu.png',
-      description: `
-  <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
-    Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
-  </div>
-  <p>In February 2023, two undersea cables connecting Taiwan's Matsu Islands to China were severed, leaving some of the islands' 14,000 residents without internet access for up to 51 days.</p>
-  <p>The area around the Matsu Islands remains a hotspot of activity. However, unlike the incident two years ago, the 2025 cable malfunction was attributed to natural degradation. Earthquakes, turbidity currents, and seabed erosion are all major contributing factors.</p>
-  <p>It's important to note the combination of frequent "gray zone" activities and the region’s vulnerable geography continues to undermine Taiwan’s internet security in this area.</p>
-`,
-      location: { center: [119.97, 26.15], zoom: 8.5, pitch: 45, bearing: 20 },
-      onChapterEnter: map => {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
       },
       onChapterExit: map => config.hidePlannedCable(map)
     },
-    {
-      id: 'incident-keelung',
-      title: 'The TPE Cable Disruption (January 2025)',
-      image: './data/Xingshun39.jpeg',
-      description:`
-    <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
-     This image shows the Xingshun 39, a general cargo ship (source: VesselFinder).
-    </div>
-    <p>On January 3, 2025, the Trans-Pacific Express (TPE) cable system—Taiwan’s high-capacity digital link to the United States and Asia—was damaged in waters about 68 kilometers off Taiwan’s northeast coast.</p>
-    <p>The cause was suspected to be a vessel flying a Tanzanian flag, the <i>XingShun 39</i>. This incident, reported by the New York Times and Taiwan’s Ministry of Digital Affairs, underscores how foreign-flagged ships can threaten critical infrastructure under ambiguous circumstances.</p>
-    <p>With cable breaks like this happening far from shore and outside Taiwan’s direct jurisdiction, repair efforts are costly, slow, and diplomatically sensitive.</p>
-  `,
-      location: { center: [122.3, 25.1], zoom: 7.5, pitch: 30, bearing: -10 },
-      onChapterEnter: map => {
-        config.hidePlannedCable(map);
-        config.addIncidentMarkers(map);
-      },
-      onChapterExit: map => config.hidePlannedCable(map)
-    },
-    {
-      id: 'incident-south',
-      title: 'Taiwan - Penghu No. 3 Severed (February 2025)',
-      image: './data/south_taiwan_incident.jpg',
-      description:
-        '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the location of the cable disruption south of Taiwan.</div><p>This incident marks the second time a foreign-flagged vessel crewed by Chinese nationals has caused a disruption to Taiwan’s undersea infrastructure. It raises serious concerns about plausible deniability, flags of convenience, and the possibility of China’s indirect involvement in these disruptions. The Penghu No. 3 cable is a critical domestic link, and this event reflects a broader pattern of escalating gray-zone pressure on Taiwan’s communications network.</p>In April 2025, it was reported that Taiwanese authorities charged the <em>HongTai‑58</em> captain with intentional subsea‑cable damage.</p>',
-      location: { center: [121.0, 21.8], zoom: 8, pitch: 40, bearing: 15 },
-      onChapterEnter: map => {
-        config.hidePlannedCable(map);
-        config.addIncidentMarkers(map);
-      },
-      onChapterExit: map => config.hidePlannedCable(map)
-    },
-    {
-      id: 'conclusion',
-      title: 'Moving Forward, What to Expect?',
-      image: './data/focustaiwan.jpg',
-      description: 'The cyan-colored line represents the new undersea cable, "Taiwan-Matsu No. 4," which is projected to be completed in 2026. This cable will link Dongyin Island with Bali in New Taipei. Chunghwa Telecom stated that the cable will be protected by plastic or metal tubes and will avoid busy fishing grounds.',
-      location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
-      onChapterEnter: map => {
-        config.showPlannedCable(map);
-        config.addIncidentMarkers(map);
-      },
-      onChapterExit: map => config.showPlannedCable(map)
-    }
+    // You can choose a chapter to call addSpecialIncidentMarker(map) here
   ]
 };
