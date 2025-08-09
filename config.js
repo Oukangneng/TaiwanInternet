@@ -143,9 +143,9 @@ const config = {
         'type': 'circle',
         'source': 'pin-point',
         'paint': {
-          'circle-radius': 8,
+          'circle-radius': 10,
           'circle-color': '#ff4d4d',
-          'circle-opacity': 0.6,
+          'circle-opacity': 0.8,
           'circle-blur': 0.6
         }
       },
@@ -158,10 +158,10 @@ const config = {
         'type': 'circle',
         'source': 'pin-point',
         'paint': {
-          'circle-radius': 8,
+          'circle-radius': 10,
           'circle-color': '#ff4d4d',
-          'circle-opacity': 0.6,
-          'circle-blur': 0.6
+          'circle-opacity': 0.8,
+          'circle-blur': 1.2
         }
       },
       beforeLayer
@@ -173,7 +173,7 @@ const config = {
         'type': 'circle',
         'source': 'pin-point',
         'paint': {
-          'circle-radius': 10,
+          'circle-radius': 12,
           'circle-color': '#ff0000',
           'circle-stroke-width': 2,
           'circle-stroke-color': '#fff',
@@ -191,8 +191,8 @@ const config = {
       const t = (timestamp - this._pulseStart) % cycle;
 
       const progress1 = t / cycle;
-      const radius1 = 8 + progress1 * 40;
-      const opacity1 = 0.6 * (1 - progress1);
+      const radius1 = 10 + progress1 * 60;
+      const opacity1 = 0.8 * (1 - progress1);
 
       const progress2 = ((t + cycle / 2) % cycle) / cycle;
       const radius2 = 8 + progress2 * 40;
