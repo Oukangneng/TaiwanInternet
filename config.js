@@ -283,7 +283,7 @@ const config = {
     <p>The cause was suspected to be a vessel flying a Tanzanian flag, the <i>XingShun 39</i>. This incident, reported by the New York Times and Taiwan’s Ministry of Digital Affairs, underscores how foreign-flagged ships can threaten critical infrastructure under ambiguous circumstances.</p>
     <p>With cable breaks like this happening far from shore and outside Taiwan’s direct jurisdiction, repair efforts are costly, slow, and diplomatically sensitive.</p>
   `,
-      location: { center: [122.3, 25.1], zoom: 7.5, pitch: 30, bearing: -10 },
+      location: { center: [122.3, 25.1], zoom: 8, pitch: 30, bearing: -10 },
       onChapterEnter(map) {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
