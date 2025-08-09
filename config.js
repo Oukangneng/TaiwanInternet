@@ -256,7 +256,7 @@ const config = {
       image: './data/Matsu.png',
       description: `
   <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
-    Photo from my visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
+    Photo from the author's visit to the Matsu Islands, showing the presence of Chinese fishermen illuminating the night sky from their boats (August 2023).
   </div>
   <p>In February 2023, two undersea cables connecting Taiwan's Matsu Islands to China were severed, leaving some of the islands' 14,000 residents without internet access for up to 51 days.</p>
   <p>The area around the Matsu Islands remains a hotspot of activity. However, unlike the incident two years ago, the 2025 cable malfunction was attributed to natural degradation. Earthquakes, turbidity currents, and seabed erosion are all major contributing factors.</p>
