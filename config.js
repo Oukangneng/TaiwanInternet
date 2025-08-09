@@ -133,7 +133,7 @@ const config = {
           'type': 'Feature',
           'geometry': {
             'type': 'Point',
-            'coordinates': [122.3, 25.1] // TPE Cable Disruption coordinate
+            'coordinates': [121.7892, 25.3787] // TPE Cable Disruption coordinate
           }
         }]
       }
