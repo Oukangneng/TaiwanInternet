@@ -71,6 +71,13 @@ const config = {
         data.features.forEach(feature => {
           const el = document.createElement('div');
           el.className = 'red-marker';
+
+          // Highlight the TPE marker by coordinates with a special class
+          const coords = feature.geometry.coordinates;
+          if (coords[0] === 121.7892 && coords[1] === 25.3787) {
+            el.classList.add('marker-tpe');
+          }
+
           el.style.width = '24px';
           el.style.height = '24px';
           el.style.borderRadius = '50%';
@@ -88,7 +95,7 @@ const config = {
           `;
 
           const marker = new mapboxgl.Marker(el)
-            .setLngLat(feature.geometry.coordinates)
+            .setLngLat(coords)
             .setPopup(
               new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML)
             )
@@ -205,4 +212,3 @@ const config = {
     }
   ]
 };
-
