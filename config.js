@@ -59,7 +59,6 @@ const config = {
    * using mapboxgl.Marker instances.
    */
   addIncidentMarkers(map) {
-    // Clear any existing markers first (optional, if you want to update dynamically)
     if (this._markers) {
       this._markers.forEach(marker => marker.remove());
     }
@@ -79,7 +78,6 @@ const config = {
           el.style.boxShadow = '0 0 5px rgba(0,0,0,0.5)';
           el.style.cursor = 'pointer';
 
-          // Build popup HTML, adjust property names as needed
           const props = feature.properties;
           const popupHTML = `
             <strong>${props.cable || 'No Cable Name'}</strong><br>
@@ -89,9 +87,7 @@ const config = {
 
           const marker = new mapboxgl.Marker(el)
             .setLngLat(feature.geometry.coordinates)
-            .setPopup(
-              new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML)
-            )
+            .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
             .addTo(map);
 
           this._markers.push(marker);
@@ -118,7 +114,6 @@ const config = {
   },
 
   /* ---------- PULSE ANIMATION HELPERS ---------- */
-  // Pulse animation variables stored here for clean removal
   _pulseAnimationId: null,
   _pulseStart: null,
 
@@ -139,40 +134,54 @@ const config = {
       }
     });
 
-    map.addLayer({
-      'id': 'pin-inner',
-      'type': 'circle',
-      'source': 'pin-point',
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#ff0000',
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#fff',
-        'circle-opacity': 1
-      }
-    });
+    // Add layers BELOW cables-layer to keep marker on top
+    const beforeLayer = map.getLayer('cables-layer') ? 'cables-layer' : undefined;
 
-    map.addLayer({
-      'id': 'pin-pulse1',
-      'type': 'circle',
-      'source': 'pin-point',
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#ff0000',
-        'circle-opacity': 0.4
-      }
-    });
+    map.addLayer(
+      {
+        'id': 'pin-pulse1',
+        'type': 'circle',
+        'source': 'pin-point',
+        'paint': {
+          'circle-radius': 8,
+          'circle-color': '#ff4d4d',
+          'circle-opacity': 0.6,
+          'circle-blur': 0.6
+        }
+      },
+      beforeLayer
+    );
 
-    map.addLayer({
-      'id': 'pin-pulse2',
-      'type': 'circle',
-      'source': 'pin-point',
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#ff0000',
-        'circle-opacity': 0.4
-      }
-    });
+    map.addLayer(
+      {
+        'id': 'pin-pulse2',
+        'type': 'circle',
+        'source': 'pin-point',
+        'paint': {
+          'circle-radius': 8,
+          'circle-color': '#ff4d4d',
+          'circle-opacity': 0.6,
+          'circle-blur': 0.6
+        }
+      },
+      beforeLayer
+    );
+
+    map.addLayer(
+      {
+        'id': 'pin-inner',
+        'type': 'circle',
+        'source': 'pin-point',
+        'paint': {
+          'circle-radius': 10,
+          'circle-color': '#ff0000',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#fff',
+          'circle-opacity': 1
+        }
+      },
+      beforeLayer
+    );
 
     this._pulseStart = null;
 
@@ -182,12 +191,12 @@ const config = {
       const t = (timestamp - this._pulseStart) % cycle;
 
       const progress1 = t / cycle;
-      const radius1 = 6 + progress1 * 24;
-      const opacity1 = 0.4 * (1 - progress1);
+      const radius1 = 8 + progress1 * 40;
+      const opacity1 = 0.6 * (1 - progress1);
 
       const progress2 = ((t + cycle / 2) % cycle) / cycle;
-      const radius2 = 6 + progress2 * 24;
-      const opacity2 = 0.4 * (1 - progress2);
+      const radius2 = 8 + progress2 * 40;
+      const opacity2 = 0.6 * (1 - progress2);
 
       if (map.getLayer('pin-pulse1')) {
         map.setPaintProperty('pin-pulse1', 'circle-radius', radius1);
@@ -223,7 +232,7 @@ const config = {
       title: 'Monitoring Taiwan’s Undersea Cable Incidents in 2025 | By Owen OConnell',
       subtitle: 'A visual timeline of cable malfunctions disrupting Taiwan’s internet connections in 2025.',
       image: './data/canvabargraph.png',
-      description:`Taiwan’s digital lifelines are under growing pressure. In 2025 alone, multiple undersea cables connecting the island to the world were cut, degraded, or sabotaged—disrupting communications and exposing deep vulnerabilities. <br><br> This visual tracker guides you through undersea cable disruptions between Taiwan and other regions in 2025. Each red circle marks a reported malfunction—click on a circle to view details about the incident. (Scroll ⤓ to begin exploring.)
+      description: `Taiwan’s digital lifelines are under growing pressure. In 2025 alone, multiple undersea cables connecting the island to the world were cut, degraded, or sabotaged—disrupting communications and exposing deep vulnerabilities. <br><br> This visual tracker guides you through undersea cable disruptions between Taiwan and other regions in 2025. Each red circle marks a reported malfunction—click on a circle to view details about the incident. (Scroll ⤓ to begin exploring.)
     <br><br>
     <small>Sources:</small>
   `,
@@ -266,7 +275,7 @@ const config = {
       id: 'incident-keelung',
       title: 'The TPE Cable Disruption (January 2025)',
       image: './data/Xingshun39.jpeg',
-      description:`
+      description: `
     <div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">
      This image shows the Xingshun 39, a general cargo ship (source: VesselFinder).
     </div>
@@ -278,11 +287,11 @@ const config = {
       onChapterEnter(map) {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
-        config.addPulse(map);  // <-- Add pulse here!
+        config.addPulse(map);  // Add pulse here
       },
       onChapterExit(map) {
         config.hidePlannedCable(map);
-        config.removePulse(map);  // <-- Remove pulse here!
+        config.removePulse(map);  // Remove pulse here
       }
     },
     {
@@ -316,3 +325,4 @@ const config = {
     }
   ]
 };
+
