@@ -59,7 +59,7 @@ const config = {
     if (!map.getSource('special-incident')) {
       map.addSource('special-incident', {
         type: 'geojson',
-        data: config.specialIncidentGeoJSON
+        data: config.special_IncidentGeoJSON
       });
     }
     if (!map.getLayer('special-incident-layer')) {
