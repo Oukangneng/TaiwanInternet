@@ -41,7 +41,7 @@ const config = {
         type: 'line',
         source: 'planned-cable',
         layout: {
-          visibility: 'none',      // hidden until toggled
+          visibility: 'none', // hidden until toggled
           'line-cap': 'round',
           'line-join': 'round'
         },
@@ -117,6 +117,105 @@ const config = {
     }
   },
 
+  /* ---------- PULSE ANIMATION HELPERS ---------- */
+  // Pulse animation variables stored here for clean removal
+  _pulseAnimationId: null,
+  _pulseStart: null,
+
+  addPulse(map) {
+    if (map.getSource('pin-point')) return; // Already added
+
+    map.addSource('pin-point', {
+      'type': 'geojson',
+      'data': {
+        'type': 'FeatureCollection',
+        'features': [{
+          'type': 'Feature',
+          'geometry': {
+            'type': 'Point',
+            'coordinates': [122.3, 25.1] // TPE Cable Disruption coordinate
+          }
+        }]
+      }
+    });
+
+    map.addLayer({
+      'id': 'pin-inner',
+      'type': 'circle',
+      'source': 'pin-point',
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#ff0000',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
+        'circle-opacity': 1
+      }
+    });
+
+    map.addLayer({
+      'id': 'pin-pulse1',
+      'type': 'circle',
+      'source': 'pin-point',
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#ff0000',
+        'circle-opacity': 0.4
+      }
+    });
+
+    map.addLayer({
+      'id': 'pin-pulse2',
+      'type': 'circle',
+      'source': 'pin-point',
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#ff0000',
+        'circle-opacity': 0.4
+      }
+    });
+
+    this._pulseStart = null;
+
+    const animate = timestamp => {
+      if (!this._pulseStart) this._pulseStart = timestamp;
+      const cycle = 1200; // ms per pulse
+      const t = (timestamp - this._pulseStart) % cycle;
+
+      const progress1 = t / cycle;
+      const radius1 = 6 + progress1 * 24;
+      const opacity1 = 0.4 * (1 - progress1);
+
+      const progress2 = ((t + cycle / 2) % cycle) / cycle;
+      const radius2 = 6 + progress2 * 24;
+      const opacity2 = 0.4 * (1 - progress2);
+
+      if (map.getLayer('pin-pulse1')) {
+        map.setPaintProperty('pin-pulse1', 'circle-radius', radius1);
+        map.setPaintProperty('pin-pulse1', 'circle-opacity', opacity1);
+      }
+      if (map.getLayer('pin-pulse2')) {
+        map.setPaintProperty('pin-pulse2', 'circle-radius', radius2);
+        map.setPaintProperty('pin-pulse2', 'circle-opacity', opacity2);
+      }
+
+      this._pulseAnimationId = requestAnimationFrame(animate);
+    };
+
+    this._pulseAnimationId = requestAnimationFrame(animate);
+  },
+
+  removePulse(map) {
+    if (this._pulseAnimationId) {
+      cancelAnimationFrame(this._pulseAnimationId);
+      this._pulseAnimationId = null;
+      this._pulseStart = null;
+    }
+    ['pin-inner', 'pin-pulse1', 'pin-pulse2'].forEach(layer => {
+      if (map.getLayer(layer)) map.removeLayer(layer);
+    });
+    if (map.getSource('pin-point')) map.removeSource('pin-point');
+  },
+
   /* ---------- CHAPTERS ---------- */
   chapters: [
     {
@@ -129,7 +228,7 @@ const config = {
     <small>Sources:</small>
   `,
       location: { center: [120, 24], zoom: 7, pitch: 0, bearing: 0 },
-      onChapterEnter() {
+      onChapterEnter(map) {
         if (typeof map !== 'undefined') {
           if (typeof drawBarChart === 'function' && !document.querySelector('#bar-chart g')) {
             drawBarChart();
@@ -138,7 +237,9 @@ const config = {
           config.addIncidentMarkers(map);
         }
       },
-      onChapterExit: map => config.hidePlannedCable(map)
+      onChapterExit(map) {
+        config.hidePlannedCable(map);
+      }
     },
     {
       id: 'incident-matsu',
@@ -153,11 +254,13 @@ const config = {
   <p>It's important to note the combination of frequent "gray zone" activities and the region’s vulnerable geography continues to undermine Taiwan’s internet security in this area.</p>
 `,
       location: { center: [119.97, 26.15], zoom: 8.5, pitch: 45, bearing: 20 },
-      onChapterEnter: map => {
+      onChapterEnter(map) {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
       },
-      onChapterExit: map => config.hidePlannedCable(map)
+      onChapterExit(map) {
+        config.hidePlannedCable(map);
+      }
     },
     {
       id: 'incident-keelung',
@@ -172,11 +275,15 @@ const config = {
     <p>With cable breaks like this happening far from shore and outside Taiwan’s direct jurisdiction, repair efforts are costly, slow, and diplomatically sensitive.</p>
   `,
       location: { center: [122.3, 25.1], zoom: 7.5, pitch: 30, bearing: -10 },
-      onChapterEnter: map => {
+      onChapterEnter(map) {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
+        config.addPulse(map);  // <-- Add pulse here!
       },
-      onChapterExit: map => config.hidePlannedCable(map)
+      onChapterExit(map) {
+        config.hidePlannedCable(map);
+        config.removePulse(map);  // <-- Remove pulse here!
+      }
     },
     {
       id: 'incident-south',
@@ -185,11 +292,13 @@ const config = {
       description:
         '<div style="font-size:0.85em;font-style:italic;color:#666;text-align:center;margin-top:10px;">Photo showing the location of the cable disruption south of Taiwan.</div><p>This incident marks the second time a foreign-flagged vessel crewed by Chinese nationals has caused a disruption to Taiwan’s undersea infrastructure. It raises serious concerns about plausible deniability, flags of convenience, and the possibility of China’s indirect involvement in these disruptions. The Penghu No. 3 cable is a critical domestic link, and this event reflects a broader pattern of escalating gray-zone pressure on Taiwan’s communications network.</p>In April 2025, it was reported that Taiwanese authorities charged the <em>HongTai‑58</em> captain with intentional subsea‑cable damage.</p>',
       location: { center: [121.0, 21.8], zoom: 8, pitch: 40, bearing: 15 },
-      onChapterEnter: map => {
+      onChapterEnter(map) {
         config.hidePlannedCable(map);
         config.addIncidentMarkers(map);
       },
-      onChapterExit: map => config.hidePlannedCable(map)
+      onChapterExit(map) {
+        config.hidePlannedCable(map);
+      }
     },
     {
       id: 'conclusion',
@@ -197,11 +306,13 @@ const config = {
       image: './data/focustaiwan.jpg',
       description: 'The cyan-colored line represents the new undersea cable, "Taiwan-Matsu No. 4," which is projected to be completed in 2026. This cable will link Dongyin Island with Bali in New Taipei. Chunghwa Telecom stated that the cable will be protected by plastic or metal tubes and will avoid busy fishing grounds.',
       location: { center: [121.2, 25.7], zoom: 6.5, pitch: 0, bearing: 0 },
-      onChapterEnter: map => {
+      onChapterEnter(map) {
         config.showPlannedCable(map);
         config.addIncidentMarkers(map);
       },
-      onChapterExit: map => config.showPlannedCable(map)
+      onChapterExit(map) {
+        config.showPlannedCable(map);
+      }
     }
   ]
 };
