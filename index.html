@@ -97,38 +97,6 @@
     /* Custom red marker style (optional, set inline in JS if desired) */
     .red-marker { }
 
-    /* TPE marker special style and glow animation */
-    .marker-tpe {
-      /* base red circle style */
-      background-color: red !important;
-      border: 2px solid black !important;
-      box-shadow: 0 0 5px rgba(0,0,0,0.5);
-      transition: box-shadow 0.3s ease-in-out;
-      position: relative;
-      z-index: 1;
-    }
-    .marker-tpe.glow {
-      animation: glow-yellow 2s ease-in-out infinite alternate;
-      box-shadow:
-        0 0 8px 3px yellow,
-        0 0 12px 5px yellow,
-        0 0 18px 8px rgba(255, 255, 0, 0.7);
-      z-index: 1000;
-    }
-    @keyframes glow-yellow {
-      from {
-        box-shadow:
-          0 0 8px 3px yellow,
-          0 0 12px 5px yellow,
-          0 0 18px 8px rgba(255, 255, 0, 0.7);
-      }
-      to {
-        box-shadow:
-          0 0 20px 6px yellow,
-          0 0 30px 10px yellow,
-          0 0 40px 15px rgba(255, 255, 0, 0.9);
-      }
-    }
   </style>
 </head>
 <body>
@@ -208,25 +176,11 @@
           r.element.classList.add('active');
           map.flyTo(chap.location);
           chap.onChapterEnter?.(map);
-
-          // Highlight TPE marker with yellow glow on incident-keelung chapter
-          const markers = document.querySelectorAll('.marker-tpe');
-          if (r.element.id === 'incident-keelung') {
-            markers.forEach(m => m.classList.add('glow'));
-          } else {
-            markers.forEach(m => m.classList.remove('glow'));
-          }
         })
         .onStepExit(r => {
           const chap = config.chapters.find(c => c.id === r.element.id);
           r.element.classList.remove('active');
           chap.onChapterExit?.(map);
-
-          // Remove glow when leaving TPE chapter
-          if (r.element.id === 'incident-keelung') {
-            const markers = document.querySelectorAll('.marker-tpe');
-            markers.forEach(m => m.classList.remove('glow'));
-          }
         });
 
       window.addEventListener('resize', scroller.resize);
